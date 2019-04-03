@@ -102,6 +102,38 @@ let rec filterSplit p l = match l with
                            else (fst splitList, x::(snd splitList))
 ;;
 
+let rec transitionDeterministic t ts = match ts with
+                  [] -> true
+                | (_,y,z)::xs -> (not (y = (getSecond t))) || (z = (getThird t))
+                                 && transitionDeterministic t xs
+;;
+
+let rec transitionsDeterministic ts = match ts with
+                  [] -> true
+                 | t::xs -> transitionDeterministic t xs
+                            && transitionsDeterministic xs
+;;
+
+let rec statesDeterministic l ts = match l with
+                   [] -> true
+                 | s::ss -> let tuple = gcut s ts in
+                            transitionsDeterministic (fst tuple) &&
+                            statesDeterministic ss (snd tuple)
+;;
+
+let rec addReachables ss ts acc = match ss with
+                   [] -> acc
+                 | s::xs -> addReachables xs ts
+                            (if s List.mem acc
+                            then acc @ (List.map getThird (fst (gcut s ts)))
+                            else acc)
+;;
+
+let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
+                                  then acc
+                             else reachableLoop ss ts (addReachables ss ts acc)
+;;
+
 (* PUBLIC FUNCTIONS *)
 
 let getStates fa =
@@ -113,6 +145,7 @@ let getAlphabet fa =
     canonical (List.map getSecond fa.transitions)
 ;;
 
+(* creates for a state a tuple of lists... *)
 let gcut s ts =
     filterSplit (fun x -> s = getFirst x) ts
 ;;
@@ -121,11 +154,11 @@ let gcut s ts =
    for each pair of transitions T1=(A,s,B) and T2=(C,t,D) holds:
     if A=B and s=t then B=D *)
 let determinism fa =
-    false
+    statesDeterministic (getStates fa) fa.transitions
 ;;
 
 let reachable fa =
-    canonical []
+    canonical (reachableLoop (getStates fa) fa.transitions [fa.initialState])
 ;;
 
 let productive fa =
