@@ -134,6 +134,10 @@ let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
                              else reachableLoop ss ts (addReachables ss ts acc)
 ;;
 
+let rec consumeWord s w ts = match w with
+                         [] -> (s,[])
+                       | a::as ->
+
 (* PUBLIC FUNCTIONS *)
 
 let getStates fa =
