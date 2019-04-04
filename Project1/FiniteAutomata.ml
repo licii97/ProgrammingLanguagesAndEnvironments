@@ -1,7 +1,7 @@
 (* FiniteAutomata module body *)
 
 (*
-Aluno 1: ????? mandatory to fill
+Aluno 1: 56554 mandatory to fill
 Aluno 2: ????? mandatory to fill
 
 Comment:
@@ -114,7 +114,7 @@ let rec transitionDeterministic t ts = match ts with
 
 (*checks if transitions in list ts are deterministic*)
 let rec transitionsDeterministic ts = match ts with
-                  [] -> true
+                   [] -> true
                  | t::xs -> transitionDeterministic t xs
                             && transitionsDeterministic xs
 ;;
@@ -132,7 +132,7 @@ let rec statesDeterministic l ts = match l with
 let rec addReachables ss ts acc = match ss with
                    [] -> acc
                  | s::xs -> addReachables xs ts
-                            (if s List.mem acc
+                            (if List.mem s acc
                             then acc @ (List.map getThird (fst (gcut s ts)))
                             else acc)
 ;;
@@ -145,29 +145,20 @@ let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
 
 (*------------Help functions for accept*)
 
-(*tests if Element e is in List l*)
-let rec belongs e l = 
-  match l with 
-  []-> false 
-  | x :: xs -> e=x || belongs e xs 
-  (* Alternative: 
-  | x :: xs -> if e=x then true else belongs e xs*)
-;; 
- 
 (*gives nextState from current state s, first char c of the word and possible transitions starting from s*)
-let rec nextState s c ts = 
-  match ts with  
+let rec nextState s c ts =
+  match ts with
       [] -> consumeWord s w
-      |y::ys -> if getSecond y = c then (getThird y) 
+      |y::ys -> if getSecond y = c then (getThird y)
               else nextState s c ys
 ;;,
 
 
 (*tests if word is consumed and if it is acceptable or if there is still soemthing left*)
-let rec consumeWord s w fa = 
-  match w with 
-    [] -> belongs s fa.acceptStates
-    | c::cs -> consumeWord (nextState s c fst(gcut s fa.transitions)) cs fa 
+let rec consumeWord s w fa =
+  match w with
+    [] -> List.mem s fa.acceptStates
+    | c::cs -> consumeWord (nextState s c fst(gcut s fa.transitions)) cs fa
     (*tests if the nextstate is an acceptState*)
 ;;
 
@@ -184,7 +175,7 @@ let getAlphabet fa =
     canonical (List.map getSecond fa.transitions)
 ;;
 
-(* creates for a state a tuple of two diffenret lists: 
+(* creates for a state a tuple of two diffenret lists:
 first list includes all transitions, that have s as a start state
 second list includes all other transitions *)
 let gcut s ts =
@@ -207,7 +198,7 @@ let productive fa =
 ;;
 
 let accept w fa =
-    if w = [] then belongs fa.initialState fa.acceptStates
+    if w = [] then List.mem fa.initialState fa.acceptStates
       else consumeWord fa.initialState w fa
 ;;
 
@@ -216,6 +207,6 @@ let generate n fa =
 ;;
 
 let accept2 w fa =
-    if determinism fa then accept w fa 
-      else false;  
+    if determinism fa then accept w fa
+      else false;
 ;;
