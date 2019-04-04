@@ -170,7 +170,7 @@ let testAcception s fa =
 let rec consumeWord s w fa =
   match w with
   [] -> testAcception s fa
-  | c::cs -> let newState = (nextState s c fst(gcut s fa.transitions) in
+  | c::cs -> let newState = (nextState s c fst(gcut s fa.transitions)) in
     if (newState = "NO_POSSIBLE_STATE") then false
               else consumeWord newState cs fa
 (*tests if word is consumed and if it is acceptable or if there is still soemthing left*)
