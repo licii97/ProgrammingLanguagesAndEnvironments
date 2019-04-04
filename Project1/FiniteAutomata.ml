@@ -102,18 +102,24 @@ let rec filterSplit p l = match l with
                            else (fst splitList, x::(snd splitList))
 ;;
 
+
+(*------------help fuctions for determinism------------*)
+
+(*checks if a transistion t is determinitic*)
 let rec transitionDeterministic t ts = match ts with
                   [] -> true
                 | (_,y,z)::xs -> (not (y = (getSecond t))) || (z = (getThird t))
                                  && transitionDeterministic t xs
 ;;
 
+(*checks if transitions in list ts are deterministic*)
 let rec transitionsDeterministic ts = match ts with
                   [] -> true
                  | t::xs -> transitionDeterministic t xs
                             && transitionsDeterministic xs
 ;;
 
+(*checks if states in l are deterministic with transitions ts*)
 let rec statesDeterministic l ts = match l with
                    [] -> true
                  | s::ss -> let tuple = gcut s ts in
@@ -121,6 +127,8 @@ let rec statesDeterministic l ts = match l with
                             statesDeterministic ss (snd tuple)
 ;;
 
+
+(*------------------------help functions for reachable-------*)
 let rec addReachables ss ts acc = match ss with
                    [] -> acc
                  | s::xs -> addReachables xs ts
@@ -134,9 +142,36 @@ let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
                              else reachableLoop ss ts (addReachables ss ts acc)
 ;;
 
-let rec consumeWord s w ts = match w with
-                         [] -> (s,[])
-                       | a::as ->
+
+(*------------Help functions for accept*)
+
+(*tests if Element e is in List l*)
+let rec belongs e l = 
+  match l with 
+  []-> false 
+  | x :: xs -> e=x || belongs e xs 
+  (* Alternative: 
+  | x :: xs -> if e=x then true else belongs e xs*)
+;; 
+ 
+(*gives nextState from current state s, first char c of the word and possible transitions starting from s*)
+let rec nextState s c ts = 
+  match ts with  
+      [] -> consumeWord s w
+      |y::ys -> if getSecond y = c then (getThird y) 
+              else nextState s c ys
+;;,
+
+
+(*tests if word is consumed and if it is acceptable or if there is still soemthing left*)
+let rec consumeWord s w fa = 
+  match w with 
+    [] -> belongs s fa.acceptStates
+    | c::cs -> consumeWord (nextState s c fst(gcut s fa.transitions)) cs fa 
+    (*tests if the nextstate is an acceptState*)
+;;
+
+
 
 (* PUBLIC FUNCTIONS *)
 
@@ -149,7 +184,9 @@ let getAlphabet fa =
     canonical (List.map getSecond fa.transitions)
 ;;
 
-(* creates for a state a tuple of lists... *)
+(* creates for a state a tuple of two diffenret lists: 
+first list includes all transitions, that have s as a start state
+second list includes all other transitions *)
 let gcut s ts =
     filterSplit (fun x -> s = getFirst x) ts
 ;;
@@ -170,7 +207,8 @@ let productive fa =
 ;;
 
 let accept w fa =
-    false
+    if w = [] then belongs fa.initialState fa.acceptStates
+      else consumeWord fa.initialState w fa
 ;;
 
 let generate n fa =
@@ -178,5 +216,6 @@ let generate n fa =
 ;;
 
 let accept2 w fa =
-    false
+    if determinism fa then accept w fa 
+      else false;  
 ;;
