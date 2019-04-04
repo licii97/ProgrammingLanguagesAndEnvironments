@@ -250,6 +250,39 @@ let accept w fa =
 Help functions for generate
 -------------------------*)
 
+(*gives all States as a list that are possible to reach from current state s 
+with char c*)
+let rec nextStatesAsList s c ts =
+  match ts with
+      [] -> []
+      |y::ys -> if((getFirst y) = s) && ((getSecond y) = c) 
+                then [(getThird y)] @ nextStatesAsList s c ys
+                else nextStatesAsList s c ys
+;;
+
+(*eliminates all transitions out of a given transition list 
+that lead to or end in an unproductive or unreachable state*)
+let rec eliminateTransitions l prod reach = 
+  match l with 
+    [] -> []
+    (*first and third element of transition tuple has to be productive and reachable*)
+    |t::ts -> if ( (List.mem (getFirst t) prod) && (List.mem (getFirst t) reach)
+                  && (List.mem (getThird t) prod) && (List.mem (getThird t) reach) )
+              then [t] @ eliminateTransitions ts prod reach
+              else eliminateTransitions ts prod reach
+;;
+
+(*filters all transitions that lead to or end in 
+an unproductive or unreachable state*)
+let rec filterTransistions fa =
+  let prod = productive fa in 
+    let reach = reachable fa in 
+      let l = fa.transitions in 
+        eliminateTransitions l prod reach
+;;
+
+
+
 let generate n fa =
     canonical []
 ;;
