@@ -246,18 +246,26 @@ let accept w fa =
       else consumeWord fa.initialState w fa
 ;;
 
+
 (*-------------------------
 Help functions for generate
 -------------------------*)
 
 (*gives all States as a list that are possible to reach from current state s 
 with char c*)
-let rec nextStatesAsList s c ts =
+let rec getNextStatesAsList s c ts =
   match ts with
       [] -> []
       |y::ys -> if((getFirst y) = s) && ((getSecond y) = c) 
-                then [(getThird y)] @ nextStatesAsList s c ys
-                else nextStatesAsList s c ys
+                then [(getThird y)] @ getNextStatesAsList s c ys
+                else getNextStatesAsList s c ys
+;;
+
+(*gives all chars in a list, that can be chosen from the current state s*)
+let rec getChars s l = 
+  match l with 
+    [] -> []
+    | t::ts ->  canonical ([getSecond t] @ getChars s ts)
 ;;
 
 (*eliminates all transitions out of a given transition list 
@@ -282,9 +290,26 @@ let rec filterTransistions fa =
 ;;
 
 
+(*main generate function, if n>0 at the start with current state s*)
+(*cw is current word, ts filtered transactions and acc acceptable states*)
+let generateAfterStart s n cw ts acc = [[]]
+(*)  if n=0 then List.mem s fa.acceptStates
+  else 
+    let cs = getChars s in 
+      match cs with 
+        [] -> []
+        |a::as -> nextStatesAsList *)
+;; 
 
 let generate n fa =
-    canonical []
+  if n = 0
+    then 
+      if (List.mem fa.initialState fa.acceptStates) then [[]] 
+      (*result: list with empty word*)
+      else [] 
+      (*result empty list*)
+  else let ts = filterTransistions fa in 
+    canonical (generateAfterStart fa.initialState n [] ts fa.acceptStates)
 ;;
 
 
