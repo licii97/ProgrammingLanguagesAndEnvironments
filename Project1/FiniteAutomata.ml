@@ -132,7 +132,8 @@ help fuctions for determinism
 (*checks if a transistion t is determinitic*)
 let rec transitionDeterministic t ts = match ts with
                   [] -> true
-                | (_,y,z)::xs -> (not (y = (getSecond t))) || (z = (getThird t))
+                | (_,y,z)::xs -> ((not (y = (getSecond t))) || (z =
+                                 (getThird t)))
                                  && transitionDeterministic t xs
 ;;
 
@@ -172,9 +173,10 @@ let rec addReachables ss ts acc = match ss with
               else acc)
 ;;
 
-let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
-                                  then acc
-                             else reachableLoop ss ts (addReachables ss ts acc)
+let rec reachableLoop ss ts acc =
+               if canonical (addReachables ss ts acc) = canonical acc
+               then acc
+               else reachableLoop ss ts (addReachables ss ts acc)
 ;;
 
 
@@ -186,9 +188,26 @@ let reachable fa =
 (*---------------------------
 Help functions for productive
 ----------------------------*)
+let prodCut s ts =
+    filterSplit (fun x -> s = getThird x) ts
+;;
+
+let rec addProductives ss ts acc = match ss with
+  [] -> acc
+  | s::xs -> addProductives xs ts
+              (if List.mem s acc
+              then acc @ (List.map getFirst (fst (prodCut s ts)))
+              else acc)
+;;
+
+let rec productiveLoop ss ts acc =
+               if canonical (addProductives ss ts acc) = canonical acc
+               then acc
+               else productiveLoop ss ts (addProductives ss ts acc)
+;;
 
 let productive fa =
-    canonical []
+    canonical (productiveLoop (getStates fa) fa.transitions fa.acceptStates)
 ;;
 
 
@@ -196,7 +215,8 @@ let productive fa =
 Help functions for accept
 -----------------------*)
 
-(*gives nextState from current state s, first char c of the word and possible transitions starting from s*)
+(*gives nextState from current state s, first char c of the word and possible
+transitions starting from s*)
 let rec nextState s c ts =
   match ts with
       [] -> "NO_POSSIBLE_STATE"
@@ -210,11 +230,12 @@ let testAcception s fa =
   List.mem s fa.acceptStates
 ;;
 
-(*takes chars from the word until ir is empty and then tests if state is acceptable*)
+(*takes chars from the word until ir is empty and then tests if state is
+acceptable*)
 let rec consumeWord s w fa =
   match w with
   [] -> testAcception s fa
-  | c::cs -> let newState = (nextState s c fst(gcut s fa.transitions)) in
+  | c::cs -> let newState = nextState s c (fst(gcut s fa.transitions)) in
     if (newState = "NO_POSSIBLE_STATE") then false
               else consumeWord newState cs fa
 ;;
