@@ -144,31 +144,28 @@ let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
 
 
 (*------------Help functions for accept*)
-
-(*tests if Element e is in List l*)
-let rec belongs e l = 
-  match l with 
-  []-> false 
-  | x :: xs -> e=x || belongs e xs 
-  (* Alternative: 
-  | x :: xs -> if e=x then true else belongs e xs*)
-;; 
  
 (*gives nextState from current state s, first char c of the word and possible transitions starting from s*)
 let rec nextState s c ts = 
   match ts with  
-      [] -> consumeWord s w
+      [] -> "NO_POSSIBLE_STATE"
       |y::ys -> if getSecond y = c then (getThird y) 
               else nextState s c ys
-;;,
+;;
 
 
-(*tests if word is consumed and if it is acceptable or if there is still soemthing left*)
+(*when word is empty, test if current state is acceptable*)
+let testAcception s fa = 
+  List.mem s fa.acceptStates
+;;
+
+(*takes chars from the word until ir is empty and then tests if state is acceptable*)
 let rec consumeWord s w fa = 
   match w with 
-    [] -> belongs s fa.acceptStates
-    | c::cs -> consumeWord (nextState s c fst(gcut s fa.transitions)) cs fa 
-    (*tests if the nextstate is an acceptState*)
+  [] -> testAcception s fa
+  | c::cs -> let newState = (nextState s c fst(gcut s fa.transitions) in 
+    if (newState = "NO_POSSIBLE_STATE") then false
+              else consumeWord newState cs fa
 ;;
 
 
@@ -207,7 +204,7 @@ let productive fa =
 ;;
 
 let accept w fa =
-    if w = [] then belongs fa.initialState fa.acceptStates
+    if w = [] then List.mem fa.initialState fa.acceptStates
       else consumeWord fa.initialState w fa
 ;;
 
