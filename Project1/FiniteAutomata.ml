@@ -103,7 +103,31 @@ let rec filterSplit p l = match l with
 ;;
 
 
-(*------------help fuctions for determinism------------*)
+
+
+
+(* PUBLIC FUNCTIONS *)
+
+let getStates fa =
+    canonical (fa.initialState::(fa.acceptStates @ (flatMap getFirstAndThird
+      fa.transitions)))
+;;
+
+let getAlphabet fa =
+    canonical (List.map getSecond fa.transitions)
+;;
+
+(* creates for a state a tuple of two diffenret lists:
+first list includes all transitions, that have s as a start state
+second list includes all other transitions *)
+let gcut s ts =
+    filterSplit (fun x -> s = getFirst x) ts
+;;
+
+
+(*---------------------------
+help fuctions for determinism
+----------------------------*)
 
 (*checks if a transistion t is determinitic*)
 let rec transitionDeterministic t ts = match ts with
@@ -128,13 +152,24 @@ let rec statesDeterministic l ts = match l with
 ;;
 
 
-(*------------------------help functions for reachable-------*)
+(* an automaton is deterministic IF:
+   for each pair of transitions T1=(A,s,B) and T2=(C,t,D) holds:
+    if A=B and s=t then B=D *)
+let determinism fa =
+    statesDeterministic (getStates fa) fa.transitions
+;;
+
+
+
+(*--------------------------
+help functions for reachable
+--------------------------*)
 let rec addReachables ss ts acc = match ss with
-                   [] -> acc
-                 | s::xs -> addReachables xs ts
-                            (if List.mem s acc
-                            then acc @ (List.map getThird (fst (gcut s ts)))
-                            else acc)
+  [] -> acc
+  | s::xs -> addReachables xs ts
+              (if List.mem s acc
+              then acc @ (List.map getThird (fst (gcut s ts)))
+              else acc)
 ;;
 
 let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
@@ -143,19 +178,28 @@ let rec reachableLoop ss ts acc = if (addReachables ss ts acc) = acc
 ;;
 
 
-(*------------Help functions for accept*)
+let reachable fa =
+    canonical (reachableLoop (getStates fa) fa.transitions [fa.initialState])
+;;
+
+
+(*---------------------------
+Help functions for productive
+----------------------------*)
+
+let productive fa =
+    canonical []
+;;
+
+
+(*-----------------------
+Help functions for accept
+-----------------------*)
 
 (*gives nextState from current state s, first char c of the word and possible transitions starting from s*)
 let rec nextState s c ts =
   match ts with
       [] -> "NO_POSSIBLE_STATE"
-      |y::ys -> if getSecond y = c then (getThird y)
-;;
-
-(*gives nextState from current state s, first char c of the word and possible transitions starting from s*)
-let rec nextState s c ts =
-  match ts with
-      [] -> consumeWord s w
       |y::ys -> if getSecond y = c then (getThird y)
               else nextState s c ys
 ;;
@@ -173,57 +217,26 @@ let rec consumeWord s w fa =
   | c::cs -> let newState = (nextState s c fst(gcut s fa.transitions)) in
     if (newState = "NO_POSSIBLE_STATE") then false
               else consumeWord newState cs fa
-(*tests if word is consumed and if it is acceptable or if there is still soemthing left*)
-let rec consumeWord s w fa =
-  match w with
-    [] -> List.mem s fa.acceptStates
-    | c::cs -> consumeWord (nextState s c fst(gcut s fa.transitions)) cs fa
-    (*tests if the nextstate is an acceptState*)
 ;;
 
-
-
-(* PUBLIC FUNCTIONS *)
-
-let getStates fa =
-    canonical (fa.initialState::(fa.acceptStates @ (flatMap getFirstAndThird
-      fa.transitions)))
-;;
-
-let getAlphabet fa =
-    canonical (List.map getSecond fa.transitions)
-;;
-
-(* creates for a state a tuple of two diffenret lists:
-first list includes all transitions, that have s as a start state
-second list includes all other transitions *)
-let gcut s ts =
-    filterSplit (fun x -> s = getFirst x) ts
-;;
-
-(* an automaton is deterministic IF:
-   for each pair of transitions T1=(A,s,B) and T2=(C,t,D) holds:
-    if A=B and s=t then B=D *)
-let determinism fa =
-    statesDeterministic (getStates fa) fa.transitions
-;;
-
-let reachable fa =
-    canonical (reachableLoop (getStates fa) fa.transitions [fa.initialState])
-;;
-
-let productive fa =
-    canonical []
-;;
 
 let accept w fa =
     if w = [] then List.mem fa.initialState fa.acceptStates
       else consumeWord fa.initialState w fa
 ;;
 
+(*-------------------------
+Help functions for generate
+-------------------------*)
+
 let generate n fa =
     canonical []
 ;;
+
+
+(*------------------------
+Help functions for accept2
+------------------------*)
 
 let accept2 w fa =
     if determinism fa then accept w fa
