@@ -2,16 +2,13 @@
 
 (*
 Aluno 1: 56554 Pascal Maximilian Engel
-Aluno 2: ????? mandatory to fill
+Aluno 2: 56601 Felicitas Schmelz
 
 Comment:
 
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
+OCaml module to simulate NFAs and DFAs, as well as to generate and check the
+corresponding accepted words.
+All public functions have been implemented.
 
 *)
 
@@ -64,6 +61,15 @@ let abcND = {
             ("SUCCESS",'e',"UNPRODUCTIVE"); ("UNPRODUCTIVE",'a',"UNPRODUCTIVE")
         ];
     acceptStates = abc.acceptStates
+};;
+
+(* additional test *)
+let aabb = {
+    initialState = "1";
+    transitions = [
+             ("1",'a',"2"); ("2",'b',"4"); ("1",'c',"3"); ("3",'d',"4")
+    ];
+    acceptStates = ["4"]
 };;
 
 let canonical l =
@@ -165,6 +171,8 @@ let determinism fa =
 (*--------------------------
 help functions for reachable
 --------------------------*)
+
+(* add all reachable states in a finite automaton *)
 let rec addReachables ss ts acc = match ss with
   [] -> acc
   | s::xs -> addReachables xs ts
@@ -173,6 +181,7 @@ let rec addReachables ss ts acc = match ss with
               else acc)
 ;;
 
+(* apply addRachables until there is no change in the result *)
 let rec reachableLoop ss ts acc =
                if canonical (addReachables ss ts acc) = canonical acc
                then acc
@@ -188,10 +197,13 @@ let reachable fa =
 (*---------------------------
 Help functions for productive
 ----------------------------*)
+
+(* Split transitions into transitions to s and rest *)
 let prodCut s ts =
     filterSplit (fun x -> s = getThird x) ts
 ;;
 
+(* add all productive states *)
 let rec addProductives ss ts acc = match ss with
   [] -> acc
   | s::xs -> addProductives xs ts
@@ -200,6 +212,7 @@ let rec addProductives ss ts acc = match ss with
               else acc)
 ;;
 
+(* add productive states until there is no change *)
 let rec productiveLoop ss ts acc =
                if canonical (addProductives ss ts acc) = canonical acc
                then acc
@@ -251,73 +264,58 @@ let accept w fa =
 Help functions for generate
 -------------------------*)
 
-(*gives all States as a list that are possible to reach from current state s
-with char c*)
-let rec getNextStatesAsList s c ts =
-  match ts with
-      [] -> []
-      |y::ys -> if((getFirst y) = s) && ((getSecond y) = c)
-                then [(getThird y)] @ getNextStatesAsList s c ys
-                else getNextStatesAsList s c ys
-;;
-
-(*gives all chars in a list, that can be chosen from the current state s*)
-let rec getChars s l =
-  match l with
-    [] -> []
-    | t::ts ->  canonical ([getSecond t] @ getChars s ts)
-;;
-
 (*eliminates all transitions out of a given transition list
 that lead to or end in an unproductive or unreachable state*)
 let rec eliminateTransitions l prod reach =
   match l with
     [] -> []
-    (*first and third element of transition tuple has to be productive and reachable*)
-    |t::ts -> if ( (List.mem (getFirst t) prod) && (List.mem (getFirst t) reach)
-                  && (List.mem (getThird t) prod) && (List.mem (getThird t) reach) )
+    (*first and third element of transition tuple
+    have to be productive and reachable*)
+   | t::ts -> if ( (List.mem (getFirst t) prod) && (List.mem (getFirst t) reach)
+               && (List.mem (getThird t) prod) && (List.mem (getThird t) reach))
               then [t] @ eliminateTransitions ts prod reach
               else eliminateTransitions ts prod reach
 ;;
 
 (*filters all transitions that lead to or end in
 an unproductive or unreachable state*)
-let rec filterTransistions fa =
+let filterTransitions fa =
   let prod = productive fa in
     let reach = reachable fa in
       let l = fa.transitions in
         eliminateTransitions l prod reach
 ;;
 
-
-(*main generate function, if n>0 at the start with current state s*)
-(*cw is current word, ts filtered transactions and acc acceptable states*)
-let generateAfterStart s n cw ts acc = [[]]
-(*)  if n=0 then List.mem s fa.acceptStates
-  else
-    let cs = getChars s in
-      match cs with
+(* generate a word based on initial state s, length n, transisitions ts and
+finite auomaton fa *)
+let rec generateWord s n ts fa =
+    if n=0 then
+        if List.mem s fa.acceptStates then [[]]
+        else []
+    else
+    match ts with
         [] -> []
-        |a::as -> nextStatesAsList *)
+        | x :: xs -> if (getFirst x) = s
+         then (List.map (fun y -> (getSecond x)::y)
+         (generateWord (getThird x) (n-1)  (fst (gcut (getThird x)
+                                             fa.transitions)) fa))
+         @ (generateWord s n xs fa)
+         else (generateWord s n xs fa)
 ;;
 
 let generate n fa =
-  if n = 0
-    then
-      if (List.mem fa.initialState fa.acceptStates) then [[]]
-      (*result: list with empty word*)
-      else []
-      (*result empty list*)
-  else let ts = filterTransistions fa in
-    canonical (generateAfterStart fa.initialState n [] ts fa.acceptStates)
+  canonical (generateWord fa.initialState
+                          n
+                          (filterTransitions fa)
+                          fa)
 ;;
 
 
 (*------------------------
-Help functions for accept2
+accept2
 ------------------------*)
 
 let accept2 w fa =
     if determinism fa then accept w fa
-      else false;
+      else List.mem w (generate (List.length w) fa);
 ;;
