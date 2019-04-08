@@ -1,7 +1,7 @@
 (* FiniteAutomata module body *)
 
 (*
-Aluno 1: 56554 mandatory to fill
+Aluno 1: 56554 Pascal Maximilian Engel
 Aluno 2: ????? mandatory to fill
 
 Comment:
@@ -251,27 +251,27 @@ let accept w fa =
 Help functions for generate
 -------------------------*)
 
-(*gives all States as a list that are possible to reach from current state s 
+(*gives all States as a list that are possible to reach from current state s
 with char c*)
 let rec getNextStatesAsList s c ts =
   match ts with
       [] -> []
-      |y::ys -> if((getFirst y) = s) && ((getSecond y) = c) 
+      |y::ys -> if((getFirst y) = s) && ((getSecond y) = c)
                 then [(getThird y)] @ getNextStatesAsList s c ys
                 else getNextStatesAsList s c ys
 ;;
 
 (*gives all chars in a list, that can be chosen from the current state s*)
-let rec getChars s l = 
-  match l with 
+let rec getChars s l =
+  match l with
     [] -> []
     | t::ts ->  canonical ([getSecond t] @ getChars s ts)
 ;;
 
-(*eliminates all transitions out of a given transition list 
+(*eliminates all transitions out of a given transition list
 that lead to or end in an unproductive or unreachable state*)
-let rec eliminateTransitions l prod reach = 
-  match l with 
+let rec eliminateTransitions l prod reach =
+  match l with
     [] -> []
     (*first and third element of transition tuple has to be productive and reachable*)
     |t::ts -> if ( (List.mem (getFirst t) prod) && (List.mem (getFirst t) reach)
@@ -280,12 +280,12 @@ let rec eliminateTransitions l prod reach =
               else eliminateTransitions ts prod reach
 ;;
 
-(*filters all transitions that lead to or end in 
+(*filters all transitions that lead to or end in
 an unproductive or unreachable state*)
 let rec filterTransistions fa =
-  let prod = productive fa in 
-    let reach = reachable fa in 
-      let l = fa.transitions in 
+  let prod = productive fa in
+    let reach = reachable fa in
+      let l = fa.transitions in
         eliminateTransitions l prod reach
 ;;
 
@@ -294,21 +294,21 @@ let rec filterTransistions fa =
 (*cw is current word, ts filtered transactions and acc acceptable states*)
 let generateAfterStart s n cw ts acc = [[]]
 (*)  if n=0 then List.mem s fa.acceptStates
-  else 
-    let cs = getChars s in 
-      match cs with 
+  else
+    let cs = getChars s in
+      match cs with
         [] -> []
         |a::as -> nextStatesAsList *)
-;; 
+;;
 
 let generate n fa =
   if n = 0
-    then 
-      if (List.mem fa.initialState fa.acceptStates) then [[]] 
+    then
+      if (List.mem fa.initialState fa.acceptStates) then [[]]
       (*result: list with empty word*)
-      else [] 
+      else []
       (*result empty list*)
-  else let ts = filterTransistions fa in 
+  else let ts = filterTransistions fa in
     canonical (generateAfterStart fa.initialState n [] ts fa.acceptStates)
 ;;
 
