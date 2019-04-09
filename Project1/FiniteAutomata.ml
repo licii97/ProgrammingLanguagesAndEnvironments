@@ -135,7 +135,8 @@ let gcut s ts =
 help fuctions for determinism
 ----------------------------*)
 
-(*checks if a transistion t is determinitic*)
+(*checks if a transistion t is determinitic
+  considering list of transitions ts *)
 let rec transitionDeterministic t ts = match ts with
                   [] -> true
                 | (_,y,z)::xs -> ((not (y = (getSecond t))) || (z =
@@ -143,14 +144,15 @@ let rec transitionDeterministic t ts = match ts with
                                  && transitionDeterministic t xs
 ;;
 
-(*checks if transitions in list ts are deterministic*)
+(*checks if all transitions in list ts are deterministic *)
 let rec transitionsDeterministic ts = match ts with
                    [] -> true
                  | t::xs -> transitionDeterministic t xs
                             && transitionsDeterministic xs
 ;;
 
-(*checks if states in l are deterministic with transitions ts*)
+(*checks if all states in list l are deterministic
+  considering transitions ts*)
 let rec statesDeterministic l ts = match l with
                    [] -> true
                  | s::ss -> let tuple = gcut s ts in
@@ -172,7 +174,10 @@ let determinism fa =
 help functions for reachable
 --------------------------*)
 
-(* add all reachable states in a finite automaton *)
+(* accumaltively find all reachable states in a finite automaton
+   given: list of states ss
+          list of transitions ts
+          accumlative list acc (starting with initial state) *)
 let rec addReachables ss ts acc = match ss with
   [] -> acc
   | s::xs -> addReachables xs ts
@@ -198,12 +203,16 @@ let reachable fa =
 Help functions for productive
 ----------------------------*)
 
-(* Split transitions into transitions to s and rest *)
+(* analogoues to gcut:
+   split transitions into transitions leading to s and rest *)
 let prodCut s ts =
     filterSplit (fun x -> s = getThird x) ts
 ;;
 
-(* add all productive states *)
+(* accumaltively find all productive states in a finite automaton
+   given: list of states ss
+          list of transitions ts
+          accumlative list acc (starting with accepted states) *)
 let rec addProductives ss ts acc = match ss with
   [] -> acc
   | s::xs -> addProductives xs ts
@@ -239,7 +248,7 @@ let rec nextState s c ts =
 
 
 (*when word is empty, test if current state is acceptable*)
-let testAcception s fa =
+let testAcceptance s fa =
   List.mem s fa.acceptStates
 ;;
 
@@ -247,7 +256,7 @@ let testAcception s fa =
 acceptable*)
 let rec consumeWord s w fa =
   match w with
-  [] -> testAcception s fa
+  [] -> testAcceptance s fa
   | c::cs -> let newState = nextState s c (fst(gcut s fa.transitions)) in
     if (newState = "NO_POSSIBLE_STATE") then false
               else consumeWord newState cs fa
@@ -264,21 +273,21 @@ let accept w fa =
 Help functions for generate
 -------------------------*)
 
-(*eliminates all transitions out of a given transition list
-that lead to or end in an unproductive or unreachable state*)
+(* eliminates all transitions out of a given transition list
+   that lead to or end in an unproductive or unreachable state *)
 let rec eliminateTransitions l prod reach =
   match l with
-    [] -> []
+     [] -> []
     (*first and third element of transition tuple
     have to be productive and reachable*)
-   | t::ts -> if ( (List.mem (getFirst t) prod) && (List.mem (getFirst t) reach)
+   | t::ts -> if ((List.mem (getFirst t) prod) && (List.mem (getFirst t) reach)
                && (List.mem (getThird t) prod) && (List.mem (getThird t) reach))
               then [t] @ eliminateTransitions ts prod reach
               else eliminateTransitions ts prod reach
 ;;
 
-(*filters all transitions that lead to or end in
-an unproductive or unreachable state*)
+(* filter all transitions that lead to or end in
+   an unproductive or unreachable state*)
 let filterTransitions fa =
   let prod = productive fa in
     let reach = reachable fa in
@@ -287,17 +296,16 @@ let filterTransitions fa =
 ;;
 
 (* generate a word based on initial state s, length n, transisitions ts and
-finite auomaton fa *)
+   finite auomaton fa *)
 let rec generateWord s n ts fa =
     if n=0 then
         if List.mem s fa.acceptStates then [[]]
         else []
-    else
-    match ts with
+    else match ts with
         [] -> []
-        | x :: xs -> if (getFirst x) = s
+      | x::xs -> if (getFirst x) = s
          then (List.map (fun y -> (getSecond x)::y)
-         (generateWord (getThird x) (n-1)  (fst (gcut (getThird x)
+         (generateWord (getThird x) (n-1) (fst (gcut (getThird x)
                                              fa.transitions)) fa))
          @ (generateWord s n xs fa)
          else (generateWord s n xs fa)
