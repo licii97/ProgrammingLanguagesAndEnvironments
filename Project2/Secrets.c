@@ -47,7 +47,7 @@ void copy_file(String input_filename, String output_filename)
 
     source = fopen(input_filename, "r");
 
-    target = fopen(output_filename, "r");
+    target = fopen(output_filename, "w");
 
     while ((ch = fgetc(source)) != EOF)
       fputc(ch, target);
@@ -58,11 +58,49 @@ void copy_file(String input_filename, String output_filename)
 
 void cesar_encrypt(String input_filename, int key, String encrypted_filename)
 {
+	char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	char ch;
+    FILE *source, *target;
+
+    source = fopen(input_filename, "r");
+
+    target = fopen(output_filename, "w");
+
+    while ((ch = fgetc(source)) != EOF){
+    	for (int i = 0; i<26; i++){
+    		if (ch= capitalLetters[i]) ch=capitalLetters[((i+key)%26)];
+    	}
+    	
+    	fputc(ch, target);
+    }
+
+    fclose(input_filename);
+    fclose(output_filename);
 }
 
 void cesar_decrypt(String encrypted_filename, int key,
 										String decrypted_filename)
 {
+	char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	char ch;
+    FILE *source, *target;
+
+    source = fopen(encrypted_filename, "r");
+
+    target = fopen(decrypted_filename, "w");
+
+    while ((ch = fgetc(source)) != EOF){
+    	for (int i = 0; i<26; i++){
+    		if (ch= capitalLetters[i]) ch=capitalLetters[(i-key)%26];
+    	}
+    	
+    	fputc(ch, target);
+    }
+
+    fclose(encrypted_filename);
+    fclose(decrypted_filename);
 }
 
 void pi_encrypt(String input_filename, String pi_filename,
