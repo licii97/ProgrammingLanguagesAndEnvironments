@@ -42,6 +42,18 @@ Comment:
 
 void copy_file(String input_filename, String output_filename)
 {
+    char ch;
+    FILE *source, *target;
+
+    source = fopen(input_filename, "r");
+
+    target = fopen(output_filename, "r");
+
+    while ((ch = fgetc(source)) != EOF)
+      fputc(ch, target);
+
+    fclose(input_filename);
+    fclose(output_filename);
 }
 
 void cesar_encrypt(String input_filename, int key, String encrypted_filename)

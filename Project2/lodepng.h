@@ -1763,8 +1763,4 @@ Account: lode dot vandevenne.
 
 
 Copyright (c) 2005-2017 Lode Vandevenne
-<<<<<<< HEAD
 */
-=======
-*/
->>>>>>> e448a0bd30ebc6bc6063054e999ff30e5cb7a92c
