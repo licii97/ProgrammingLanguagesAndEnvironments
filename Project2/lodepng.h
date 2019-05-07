@@ -1735,7 +1735,11 @@ symbol.
     loadFile function for convenience. Made decodePNG32 faster.
 *) 21 jun 2006: (!) Changed type of info vector to unsigned.
     Changed position of palette in info vector. Fixed an important bug that
+<<<<<<< HEAD
     happened on PNGs with an uncompressed block.
+=======
+    hap#pened on PNGs with an uncompressed block.
+>>>>>>> e448a0bd30ebc6bc6063054e999ff30e5cb7a92c
 *) 16 jun 2006: Internally changed unsigned into unsigned where
     needed, and performed some optimizations.
 *) 07 jun 2006: (!) Renamed functions to decodePNG and placed them
@@ -1759,4 +1763,8 @@ Account: lode dot vandevenne.
 
 
 Copyright (c) 2005-2017 Lode Vandevenne
+<<<<<<< HEAD
 */
+=======
+*/
+>>>>>>> e448a0bd30ebc6bc6063054e999ff30e5cb7a92c

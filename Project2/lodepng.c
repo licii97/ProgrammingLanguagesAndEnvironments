@@ -6229,4 +6229,8 @@ unsigned encode(const std::string& filename,
 #endif /* LODEPNG_COMPILE_ENCODER */
 #endif /* LODEPNG_COMPILE_PNG */
 } /* namespace lodepng */
+<<<<<<< HEAD
 #endif /*LODEPNG_COMPILE_CPP*/
+=======
+#endif /*LODEPNG_COMPILE_CPP*/
+>>>>>>> e448a0bd30ebc6bc6063054e999ff30e5cb7a92c
