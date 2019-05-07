@@ -83,22 +83,7 @@ extern bool error(String err, String arg);
 
 /* ENCRYPTION */
 
-extern void copy_file(String input_filename, String output_filename)
-{
-	FILE *f, *g; 
-    int c;       
-
-    if( (f = fopen(orig, "rb")) == NULL )
-        return false;
-    if( (g = fopen(dest, "wb")) == NULL )
-        return false;
-
-    while( (c = fgetc(f)) != EOF )
-        fputc(c, g);
-
-    fclose(f);
-    fclose(g);
-};
+extern void copy_file(String input_filename, String output_filename);
 
 #define CESAR_MAX	26
 extern void cesar_encrypt(String input_filename, int key,
