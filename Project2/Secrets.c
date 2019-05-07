@@ -65,7 +65,7 @@ void cesar_encrypt(String input_filename, int key, String encrypted_filename)
 
     source = fopen(input_filename, "r");
 
-    target = fopen(output_filename, "w");
+    target = fopen(encrypted_filename, "w");
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
@@ -76,7 +76,7 @@ void cesar_encrypt(String input_filename, int key, String encrypted_filename)
     }
 
     fclose(input_filename);
-    fclose(output_filename);
+    fclose(encrypted_filename);
 }
 
 void cesar_decrypt(String encrypted_filename, int key,
@@ -106,11 +106,86 @@ void cesar_decrypt(String encrypted_filename, int key,
 void pi_encrypt(String input_filename, String pi_filename,
 										String encrypted_filename)
 {
+	char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	int key; 
+
+	char ch;
+    FILE *source, *target;
+
+    source = fopen(input_filename, "r");
+
+    target = fopen(encrypted_filename, "w");
+
+    pi = fopen(pi_filename, "r");
+
+    //first two digits from pi file aren't used 
+    key = fgetc(pi);
+    key = fgetc(pi);
+
+    while ((ch = fgetc(source)) != EOF){
+    	for (int i = 0; i<26; i++){
+    		if (ch= capitalLetters[i]){
+    			if ((key = fgetc(pi))==EOF){
+    				fclose = (pi_filename);
+    				pi = fopen(pi_filename, "r");
+
+    				//first two digits from pi file aren't used 
+    				key = fgetc(pi);
+    				key = fgetc(pi);
+    				//third digit is first one to use
+    				key = fgetc(pi);
+    			}
+    			ch=capitalLetters[((i+key)%26)];
+    		} 
+    	}
+
+    	fputc(ch, target);
+    }
+
+    fclose(input_filename);
+    fclose(encrypted_filename);
+    fclose(pi_filename);
 }
 
 void pi_decrypt(String encrypted_filename, String pi_filename,
 											String decrypted_filename)
 {
+	char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	int key; 
+
+	char ch;
+    FILE *source, *target;
+
+    source = fopen(encrypted_filename, "r");
+
+    target = fopen(decrypted_filename, "w");
+
+    pi = fopen(pi_filename, "r");
+
+    while ((ch = fgetc(source)) != EOF){
+    	for (int i = 0; i<26; i++){
+    		if (ch= capitalLetters[i]){
+    			if ((key = fgetc(pi))==EOF){
+    				fclose = (pi_filename);
+    				pi = fopen(pi_filename, "r");
+
+    				//first two digits from pi file aren't used 
+    				key = fgetc(pi);
+    				key = fgetc(pi);
+    				//third digit is first one to use
+    				key = fgetc(pi);
+    			}
+    			
+    			ch=capitalLetters[((i-key)%26)];
+    		} 
+    	}
+    	
+    	fputc(ch, target);
+    }
+
+    fclose(encrypted_filename);
+    fclose(decrypted_filename);
+    fclose(pi_filename);
 }
 
 void pack_encrypt(String input_filename, String encrypted_filename)
