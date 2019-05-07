@@ -31,8 +31,30 @@ Comment:
 
 /* FUNCTIONS Int2 */
 
+extern bool int2_equal(Int2 a, Int2 b)
+{
+	if ((a.x==b.x) && (a.y==b.y)) return true; 
+	else return false; 
+};
+
 
 /* FUNCTIONS Pixel */
+
+extern bool pixel_equal(Pixel a, Pixel b)
+{
+	if ((a.red == b.red) && (a.green == b.green) && (a.blue == b.blue)) return true;
+	else return false; 
+};
+
+extern Pixel pixel_turn_gray(Pixel p)
+{
+	g = int((p.red + p.green + p.blue)/3);
+	p.red=g; 
+	p.green=g;
+	p.blue=g;
+
+	return p; 
+};
 
 
 /* FUNCTIONS Image */
