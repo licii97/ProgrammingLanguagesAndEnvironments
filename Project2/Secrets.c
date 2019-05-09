@@ -36,6 +36,7 @@ extern Int2 zero()
 	Int2 i; 
 	i.x=0;
 	i.y=0; 
+
 	return i;
 };
 
@@ -50,6 +51,7 @@ extern Int2 int2(int x, int y)
 	Int2 i; 
 	i.x=x;
 	i.y=y;
+
 	return i;
 };
 
@@ -83,32 +85,62 @@ extern bool int2_is_error(Int2 a)
 
 extern Pixel white()
 {
+	Pixel p; 
+	p.red = MAX_COLOR; 
+	p.green = MAX_COLOR; 
+	p.blue = MAX_COLOR;
 
+	return p; 
 };
 
 extern Pixel red()
 {
+	Pixel p; 
+	p.red = MAX_COLOR; 
+	p.green = 0; 
+	p.blue = 0;
 
+	return p; 
 };
 
 extern Pixel green()
 {
+	Pixel p; 
+	p.red = 0; 
+	p.green = MAX_COLOR; 
+	p.blue = 0;
 
+	return p; 
 };
 
 extern Pixel grey()
 {
+	Pixel p; 
+	p.red = (MAX_COLOR/2); 
+	p.green = (MAX_COLOR/2); 
+	p.blue = (MAX_COLOR/2);
 
+	return p; 
 };
 
 extern Pixel blue()
 {
+	Pixel p; 
+	p.red = 0; 
+	p.green = 0; 
+	p.blue = MAX_COLOR;
 
+	return p; 
 };
 
 extern Pixel black()
 {
+	Pixel p; 
+	p.red = 0; 
+	p.green = 0; 
+	p.blue = 0;
 
+	return p; 
 };
 
 
