@@ -396,23 +396,81 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
 
 void pack_encrypt(String input_filename, String encrypted_filename)
 {
-  char ch;
-  FILE *source, *target;
+    int n = 0; //counter to skip every first bit of a byte 
 
-  source = fopen(input_filename, "r");
+    char ch;
+    FILE *source, *target;
 
-  target = fopen(encrypted_filename, "w");
+    source = fopen(input_filename, "r");
 
-  while ((ch = fgetc(source)) != EOF)
-    shiftl(ch,0);
-  //TODO finish this
+    target = fopen(encrypted_filename, "w");
 
-  fclose(input_filename);
-  fclose(encrypted_filename);
+    while ((ch = fgetc(source)) != EOF)
+    {
+        //every first bit of a byte is skipped 
+        if ((n%8)!=0) fputc(ch, target);
+        n++; 
+    }
+
+    /*shiftl(ch,0); -> hab keine erklärung der funktion im internet gefunden, 
+    aber ohne geht auch, halt umständlicher und ein bisschen hässlicher :D 
+    */
+
+    //fill up 
+    int h1 = n/8; //number of skipped bits
+    int h2 = (n-h1)%8; //number of bits that leftover for the last byte
+    //add "0" until the number if bits can be divided by 8 
+    if (h2!=0)
+    {
+        while (h2 < 8){
+            fputc("0", target);
+            h2++;
+        }
+    }
+
+
+    fclose(input_filename);
+    fclose(encrypted_filename);
 }
 
 void pack_decrypt(String encrypted_filename, String decrypted_filename)
 {
+    int n = 0; //counter to skip every first bit of a byte 
+
+    char ch;
+    char str[8];
+    FILE *source, *target;
+
+    source = fopen(encrypted_filename, "r");
+
+    target = fopen(decrypted_filename, "w");
+
+    while ((ch = fgetc(source)) != EOF)
+    {
+        /*
+        //add a zero and let 7 bits follow 
+        if (n==0)
+        {
+            str[n] = "0";
+            n++; 
+        }
+
+        if (n!=0) 
+        {
+            str[n] = ch; 
+            n++;
+        }
+
+        if (n==8){
+            fputc(str, target);
+            n=0;
+        }
+        */
+
+    }
+
+    fclose(encrypted_filename);
+    fclose(decrypted_filename);
 }
 
 
