@@ -172,6 +172,7 @@ extern Pixel pixel_turn_gray(Pixel p)
 
 /* FUNCTIONS Image */
 
+//TODO
 Int2 image_load(String filename, Image result)
 {
 	return true;
