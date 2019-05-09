@@ -27,14 +27,20 @@ Comment:
 
 
 /* FUNCTIONS Byte */
+typedef unsigned char Byte;
 
+// shift left and insert a new least significant bit
+#define shiftl(byte, newbit)    ( (byte) * 2 + (newbit) )
+
+// most significant bit
+#define msb(byte)               ( ((signed char)(byte)) < 0 ? 1 : 0 )
 
 /* FUNCTIONS Int2 */
 
 extern bool int2_equal(Int2 a, Int2 b)
 {
-	if ((a.x==b.x) && (a.y==b.y)) return true; 
-	else return false; 
+	if ((a.x==b.x) && (a.y==b.y)) return true;
+	else return false;
 };
 
 
@@ -43,18 +49,24 @@ extern bool int2_equal(Int2 a, Int2 b)
 extern bool pixel_equal(Pixel a, Pixel b)
 {
 	if ((a.red == b.red) && (a.green == b.green) && (a.blue == b.blue)) return true;
-	else return false; 
+	else return false;
 };
 
 extern Pixel pixel_turn_gray(Pixel p)
 {
-	g = int((p.red + p.green + p.blue)/3);
-	p.red=g; 
+	int g = (int) (p.red + p.green + p.blue)/3;
+	p.red=g;
 	p.green=g;
 	p.blue=g;
 
-	return p; 
+	return p;
 };
+
+extern Pixel pixel_change_green(Pixel p, char ch)
+{
+  p.green=ch;
+  return p;
+}
 
 
 /* FUNCTIONS Image */
@@ -91,9 +103,9 @@ void cesar_encrypt(String input_filename, int key, String encrypted_filename)
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
-    		if (ch= capitalLetters[i]) ch=capitalLetters[((i+key)%26)];
+    		if (ch == capitalLetters[i]) ch=capitalLetters[((i+key)%26)];
     	}
-    	
+
     	fputc(ch, target);
     }
 
@@ -115,9 +127,9 @@ void cesar_decrypt(String encrypted_filename, int key,
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
-    		if (ch= capitalLetters[i]) ch=capitalLetters[(i-key)%26];
+    		if (ch == capitalLetters[i]) ch=capitalLetters[(i-key)%26];
     	}
-    	
+
     	fputc(ch, target);
     }
 
@@ -125,14 +137,15 @@ void cesar_decrypt(String encrypted_filename, int key,
     fclose(decrypted_filename);
 }
 
+
 void pi_encrypt(String input_filename, String pi_filename,
 										String encrypted_filename)
 {
 	char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	int key; 
+	int key;
 
 	char ch;
-    FILE *source, *target;
+    FILE *source, *target, *pi;
 
     source = fopen(input_filename, "r");
 
@@ -140,25 +153,25 @@ void pi_encrypt(String input_filename, String pi_filename,
 
     pi = fopen(pi_filename, "r");
 
-    //first two digits from pi file aren't used 
+    //first two digits from pi file aren't used
     key = fgetc(pi);
     key = fgetc(pi);
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
-    		if (ch= capitalLetters[i]){
-    			if ((key = fgetc(pi))==EOF){
-    				fclose = (pi_filename);
+    		if (ch == capitalLetters[i]){
+    			if ((key = fgetc(pi)) == EOF){
+    				fclose(pi_filename);
     				pi = fopen(pi_filename, "r");
 
-    				//first two digits from pi file aren't used 
+    				//first two digits from pi file aren't used
     				key = fgetc(pi);
     				key = fgetc(pi);
     				//third digit is first one to use
     				key = fgetc(pi);
     			}
     			ch=capitalLetters[((i+key)%26)];
-    		} 
+    		}
     	}
 
     	fputc(ch, target);
@@ -173,10 +186,10 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
 											String decrypted_filename)
 {
 	char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	int key; 
+	int key;
 
 	char ch;
-    FILE *source, *target;
+    FILE *source, *target, *pi;
 
     source = fopen(encrypted_filename, "r");
 
@@ -186,22 +199,22 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
-    		if (ch= capitalLetters[i]){
-    			if ((key = fgetc(pi))==EOF){
-    				fclose = (pi_filename);
+    		if (ch == capitalLetters[i]){
+    			if ((key = fgetc(pi)) == EOF){
+    				fclose(pi_filename);
     				pi = fopen(pi_filename, "r");
 
-    				//first two digits from pi file aren't used 
+    				//first two digits from pi file aren't used
     				key = fgetc(pi);
     				key = fgetc(pi);
     				//third digit is first one to use
     				key = fgetc(pi);
     			}
-    			
+
     			ch=capitalLetters[((i-key)%26)];
-    		} 
+    		}
     	}
-    	
+
     	fputc(ch, target);
     }
 
@@ -212,6 +225,18 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
 
 void pack_encrypt(String input_filename, String encrypted_filename)
 {
+  char ch;
+  FILE *source, *target;
+
+  source = fopen(input_filename, "r");
+
+  target = fopen(encrypted_filename, "w");
+
+  while ((ch = fgetc(source)) != EOF)
+    shiftl(ch,0);
+
+  fclose(input_filename);
+  fclose(encrypted_filename);
 }
 
 void pack_decrypt(String encrypted_filename, String decrypted_filename)
@@ -233,7 +258,18 @@ void dots_reveal(String disguised_filename, String decoded_filename)
 Int2 crude_hide(Image img, Int2 n,
 					String message_filename, Image result)
 {
-	return n;
+  char ch;
+  FILE *source;
+
+  source = fopen(message_filename, "r");
+
+  Int2 i;
+  for(i.y = 0; i.y < n.y; i.y++)
+  for(i.x = 0; i.x < n.x; i.x++) {
+        result[i.x][i.y] = pixel_change_green(img[i.x][i.y],ch);
+  }
+  fclose(source);
+  return n;
 }
 
 void crude_reveal(Image img, Int2 n, String decoded_filename)
