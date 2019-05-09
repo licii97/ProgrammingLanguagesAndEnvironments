@@ -39,9 +39,9 @@ typedef unsigned char Byte;
 
 extern Int2 zero()
 {
-	Int2 i; 
+	Int2 i;
 	i.x=0;
-	i.y=0; 
+	i.y=0;
 
 	return i;
 };
@@ -49,12 +49,12 @@ extern Int2 zero()
 //TODO
 extern Int2 int2_erro()
 {
-	return NULL; 
+	return NULL;
 };
 
 extern Int2 int2(int x, int y)
 {
-	Int2 i; 
+	Int2 i;
 	i.x=x;
 	i.y=y;
 
@@ -70,19 +70,19 @@ extern bool int2_equal(Int2 a, Int2 b)
 //TODO
 extern bool int2_less(Int2 a, Int2 b)
 {
-	return false; 
+	return false;
 };
 
 //TODO
 extern double int2_distance(Int2 a, Int2 b)
 {
-	return NULL; 
+	return NULL;
 };
 
 //TODO
 extern bool int2_is_error(Int2 a)
 {
-	return false; 
+	return false;
 };
 
 
@@ -91,71 +91,71 @@ extern bool int2_is_error(Int2 a)
 
 extern Pixel white()
 {
-	Pixel p; 
-	p.red = MAX_COLOR; 
-	p.green = MAX_COLOR; 
+	Pixel p;
+	p.red = MAX_COLOR;
+	p.green = MAX_COLOR;
 	p.blue = MAX_COLOR;
 
-	return p; 
+	return p;
 };
 
 extern Pixel red()
 {
-	Pixel p; 
-	p.red = MAX_COLOR; 
-	p.green = 0; 
+	Pixel p;
+	p.red = MAX_COLOR;
+	p.green = 0;
 	p.blue = 0;
 
-	return p; 
+	return p;
 };
 
 extern Pixel green()
 {
-	Pixel p; 
-	p.red = 0; 
-	p.green = MAX_COLOR; 
+	Pixel p;
+	p.red = 0;
+	p.green = MAX_COLOR;
 	p.blue = 0;
 
-	return p; 
+	return p;
 };
 
 extern Pixel grey()
 {
-	Pixel p; 
-	p.red = (MAX_COLOR/2); 
-	p.green = (MAX_COLOR/2); 
+	Pixel p;
+	p.red = (MAX_COLOR/2);
+	p.green = (MAX_COLOR/2);
 	p.blue = (MAX_COLOR/2);
 
-	return p; 
+	return p;
 };
 
 extern Pixel blue()
 {
-	Pixel p; 
-	p.red = 0; 
-	p.green = 0; 
+	Pixel p;
+	p.red = 0;
+	p.green = 0;
 	p.blue = MAX_COLOR;
 
-	return p; 
+	return p;
 };
 
 extern Pixel black()
 {
-	Pixel p; 
-	p.red = 0; 
-	p.green = 0; 
+	Pixel p;
+	p.red = 0;
+	p.green = 0;
 	p.blue = 0;
 
-	return p; 
+	return p;
 };
 
 
 extern Pixel pixel(int red, int green, int blue)
 {
-	Pixel p; 
-	p.red=red; 
+	Pixel p;
+	p.red=red;
 	p.green=green;
-	p.blue=blue; 
+	p.blue=blue;
 	return p;
 };
 
@@ -177,7 +177,7 @@ extern Pixel pixel_turn_gray(Pixel p)
 
 extern Pixel pixel_change_green(Pixel p, char ch)
 {
-  p.green=ch;
+  p.green=(int) ch;
   return p;
 }
 
@@ -206,7 +206,7 @@ bool image_store(String filename, Image img, Int2 n)
     }
 
     fclose(filename);
-    return true; 
+    return true;
 
 };
 
@@ -405,6 +405,7 @@ void pack_encrypt(String input_filename, String encrypted_filename)
 
   while ((ch = fgetc(source)) != EOF)
     shiftl(ch,0);
+  //TODO finish this
 
   fclose(input_filename);
   fclose(encrypted_filename);
@@ -424,6 +425,23 @@ void dots_hide(String input_filename,
 
 void dots_reveal(String disguised_filename, String decoded_filename)
 {
+    char ch;
+    FILE *source, *target;
+
+    source = fopen(disguised_filename, "r");
+    target = fopen(decoded_filename, "w");
+
+    while ((ch = fgetc(source)) != EOF){
+      char next = fgetc(source);
+      char nextNext = fgetc(source);
+      if(ch == '.' && next == ' ' && nextNext == ' ')
+        fputc(1,target);
+      if(ch == '.' && next == ' ')
+        fputc(0,taget);
+    }
+
+    fclose(source);
+    fclose(target);
 }
 
 Int2 crude_hide(Image img, Int2 n,
