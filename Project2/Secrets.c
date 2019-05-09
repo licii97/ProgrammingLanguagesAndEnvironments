@@ -65,8 +65,8 @@ void copy_file(String input_filename, String output_filename)
     while ((ch = fgetc(source)) != EOF)
       fputc(ch, target);
 
-    fclose(input_filename);
-    fclose(output_filename);
+    fclose(source);
+    fclose(target);
 }
 
 void cesar_encrypt(String input_filename, int key, String encrypted_filename)
@@ -88,8 +88,8 @@ void cesar_encrypt(String input_filename, int key, String encrypted_filename)
     	fputc(ch, target);
     }
 
-    fclose(input_filename);
-    fclose(encrypted_filename);
+    fclose(source);
+    fclose(target);
 }
 
 void cesar_decrypt(String encrypted_filename, int key,
@@ -112,8 +112,8 @@ void cesar_decrypt(String encrypted_filename, int key,
     	fputc(ch, target);
     }
 
-    fclose(encrypted_filename);
-    fclose(decrypted_filename);
+    fclose(source);
+    fclose(target);
 }
 
 
@@ -140,7 +140,7 @@ void pi_encrypt(String input_filename, String pi_filename,
     	for (int i = 0; i<26; i++){
     		if (ch == capitalLetters[i]){
     			if ((key = fgetc(pi)) == EOF){
-    				fclose(pi_filename);
+    				fclose(pi);
     				pi = fopen(pi_filename, "r");
 
     				//first two digits from pi file aren't used
@@ -156,9 +156,9 @@ void pi_encrypt(String input_filename, String pi_filename,
     	fputc(ch, target);
     }
 
-    fclose(input_filename);
-    fclose(encrypted_filename);
-    fclose(pi_filename);
+    fclose(source);
+    fclose(target);
+    fclose(pi);
 }
 
 void pi_decrypt(String encrypted_filename, String pi_filename,
@@ -180,7 +180,7 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     	for (int i = 0; i<26; i++){
     		if (ch == capitalLetters[i]){
     			if ((key = fgetc(pi)) == EOF){
-    				fclose(pi_filename);
+    				fclose(pi);
     				pi = fopen(pi_filename, "r");
 
     				//first two digits from pi file aren't used
@@ -197,15 +197,16 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     	fputc(ch, target);
     }
 
-    fclose(encrypted_filename);
-    fclose(decrypted_filename);
-    fclose(pi_filename);
+    fclose(source);
+    fclose(target);
+    fclose(pi);
 }
 
 void pack_encrypt(String input_filename, String encrypted_filename)
 {
     int n = 0; //counter to skip every first bit of a byte 
 
+    char zero = 0;
     char ch;
     FILE *source, *target;
 
@@ -231,14 +232,14 @@ void pack_encrypt(String input_filename, String encrypted_filename)
     if (h2!=0)
     {
         while (h2 < 8){
-            fputc("0", target);
+            fputc(zero, target);
             h2++;
         }
     }
 
 
-    fclose(input_filename);
-    fclose(encrypted_filename);
+    fclose(source);
+    fclose(target);
 }
 
 void pack_decrypt(String encrypted_filename, String decrypted_filename)
@@ -277,8 +278,8 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
 
     }
 
-    fclose(encrypted_filename);
-    fclose(decrypted_filename);
+    fclose(source);
+    fclose(target);
 }
 
 
