@@ -41,10 +41,28 @@ typedef unsigned char Byte;
 
 /* FUNCTIONS Pixel */
 
+//additional function fpr crude_hide
 extern Pixel pixel_change_green(Pixel p, char ch)
 {
   p.green=(int) ch;
   return p;
+}
+
+//additional functions for image_hide
+int hide_bit_in_colorvalue(int value, char bit)
+{
+    if ((bit == '0') && ((value % 2) == 0 )) return value; 
+    else if ((bit == '0') && ((value % 2) == 1 )) return (value - 1);
+    else if ((bit == '1') && ((value % 2) == 0 )) return (value +1) ;
+    else return value; 
+}
+
+Pixel hide_3Zeros_in_Pixel(Pixel p)
+{
+    p.red = hide_bit_in_colorvalue(p.red, 0);
+    p.green = hide_bit_in_colorvalue(p.green, 0);
+    p.blue = hide_bit_in_colorvalue(p.blue, 0);
+    return p;
 }
 
 
@@ -225,7 +243,7 @@ void pack_encrypt(String input_filename, String encrypted_filename)
     aber ohne geht auch, halt umständlicher und ein bisschen hässlicher :D 
     */
 
-    //fill up 
+    //fill up wih 0 till last byte is completed
     int h1 = n/8; //number of skipped bits
     int h2 = (n-h1)%8; //number of bits that leftover for the last byte
     //add "0" until the number if bits can be divided by 8 
@@ -242,6 +260,8 @@ void pack_encrypt(String input_filename, String encrypted_filename)
     fclose(target);
 }
 
+
+//TODO
 void pack_decrypt(String encrypted_filename, String decrypted_filename)
 {
     int n = 0; //counter to skip every first bit of a byte 
@@ -285,7 +305,7 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
 
 /* STEGANOGRAPHY */
  //additional function to dots_hide
-void append_ZeroByte (FILE *input, FILE *target){
+void append_ZeroByte_dots_hide (FILE *input, FILE *target){
     char ch; 
     char next;
 
@@ -347,7 +367,7 @@ void dots_hide(String input_filename,
                     fclose(source2); //you do not need message anymore
 
                     //call helping function to apennd 0-Byte
-                    append_ZeroByte(source1, target);
+                    append_ZeroByte_dots_hide(source1, target);
 
                     //when appended the 0-Byte succcessfully, you just need to close the streams
                     fclose(source1);
@@ -428,15 +448,123 @@ Int2 crude_hide(Image img, Int2 n,
   return n;
 }
 
+//TODO
 void crude_reveal(Image img, Int2 n, String decoded_filename)
 {
 }
 
 
+
+Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char current_color){ 
+    //Int2 j is position in image, where message ended
+    Int2 i; 
+    int c = 0; //counter for 8 bits of the 0-Byte at the end
+
+    //different cases at which color value of the pixel the message ended
+    switch (current_color){ 
+        case 'r': 
+            result[i.x][i.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]); 
+            c=c+3;
+            break; 
+        case 'g':
+            result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
+            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
+            c=c+2;
+            break; 
+        case 'b': 
+            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
+            c=c+1;
+            break;            
+        } 
+
+
+    //next 8-c Bits have to be 0
+    for(i.y = j.y; i.y < n.y; i.y++){
+        for(i.x = j.x; i.x < n.x; i.x++) {
+            //different cases of how many bits of the 0-byte are left
+            switch ((8-c)){ 
+                case 0:  
+                    break; 
+                case 1:
+                    result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
+                    result[i.x][i.y].green = img[i.x][i.y].green;
+                    result[i.x][i.y].blue = img[i.x][i.y].blue;
+                    c=c+1;
+                    break; 
+                case 2: 
+                    result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
+                    result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
+                    result[i.x][i.y].blue = img[i.x][i.y].blue;
+                    c=c+2;
+                    break;  
+                default: 
+                    result[i.x][i.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]); 
+                    c=c+3;
+                    break;          
+                }  
+                if (c==8) break; 
+            }
+            if (c==8) break;
+        }
+         
+        
+    //if 0-Byte is successfully appended, rest of the img is just copied to result
+    for(i.y = i.y; i.y < n.y; i.y++)
+    for(i.x = i.x; i.x < n.x; i.x++) {
+        result[i.x][i.y] = img[i.x][i.y];
+    }
+
+    //if img end before all 8 0-Bits are appended, there is an error
+    if (c < 8) error("Message does not fit in image", "blablabla, whatever belongs here");
+    return n;
+    
+}
+
 Int2 image_hide(Image img, Int2 n,
 					String message_filename, Image result)
 {
-	return n;
+    char ch; 
+    Int2 i;
+    int c = 0; //counter for 8 bits of the 0-Byte at the end
+
+    FILE *source;
+    source = fopen(message_filename, "r");
+
+    for(i.y = 0; i.y < n.y; i.y++)
+    for(i.x = 0; i.x < n.x; i.x++) {
+        //red part of pixel 
+        ch = fgetc(source);
+        if (ch != EOF) 
+            result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, ch);
+        else {
+            fclose(source);
+            append_ZeroByte_image_hide(img, n, result, i, 'r'); 
+        }
+
+        //green part of pixel 
+        ch = fgetc(source);
+        if (ch != EOF) 
+            result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, ch);
+        else {
+            fclose(source);
+            append_ZeroByte_image_hide(img, n, result, i, 'g'); 
+        }
+
+        //blue part of pixel 
+        ch = fgetc(source);
+        if (ch != EOF) 
+            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, ch);
+        else {
+            fclose(source);
+            append_ZeroByte_image_hide(img, n, result, i, 'b'); 
+        }
+    }
+
+    fclose(source);
+
+    //function gets here, when img is finished, but message or 0-Byte nor yet
+    error("Message does not fit in image", "blablabla, whatever belongs here");
+    return n;
 }
 
 void image_reveal(Image img, Int2 n, String decoded_filename)
