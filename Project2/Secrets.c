@@ -284,10 +284,95 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
 
 
 /* STEGANOGRAPHY */
+ //additional function to dots_hide
+void append_ZeroByte (FILE *input, FILE *target){
+    char ch; 
+    char next;
+
+    //counter to get 8 Bits, when entering the function the first 0 bot is already set 
+    int n = 1; 
+    //so you need to skip all the " " to encode current full stop as a 0
+    while ((next=fgetc(input))== ' '){} 
+
+    while ((ch=fgetc(input)) != EOF){
+        fputc(ch, target);
+
+        // you have to make sure, that the first 8 full stops are encoded as a 0
+        if ((n < 8) && (ch == '.')){
+            next = fgetc(input);
+            fputc(next, target);
+            
+            if (next == ' ' ){
+                // following " " are cut out from the input_file
+                while ((next=fgetc(input))== ' '){} 
+                n++;
+        }
+    }
+
+    //if input is ended, but there is not the full 0-Byte at the end it is an error
+    if (n<8) {
+        fclose(input);
+        fclose(target);
+        error("0-Byte does not fit in container", "blablawas auch immer hier rein soll"); 
+    }
+
+}
 
 void dots_hide(String input_filename,
 				String message_filename, String disguised_filename)
 {
+    char ch1;
+    char ch2;
+    char next; 
+    FILE *source1, *source2, *target;
+
+    source1 = fopen(input_filename, "r");
+    source2 = fopen(message_filename, "r");
+    target = fopen(disguised_filename, "w");
+
+    while ((ch1=fgetc(source1)) != EOF){
+        fputc(ch1, target);
+
+        if (ch1 == '.'){
+            next = fgetc(source1); 
+            fputc(next, target);
+
+            // if after "." there is " " then it is a full stop
+            if (next == ' ' ){
+                ch2 = fgetc(source2);
+
+                //if message is ended, you need to append a 0-Byte 
+                if (ch2 == EOF){ 
+                    fclose(source2); //you do not need message anymore
+
+                    //call helping function to apennd 0-Byte
+                    append_ZeroByte(source1, target);
+
+                    //when appended the 0-Byte succcessfully, you just need to close the streams
+                    fclose(source1);
+                    fclose(target);
+                    return; 
+                }
+
+                //read next char in message and encode either as a 0 or a 1
+                else if (ch2 == 0) {
+                    // following " " are cut out from the input_file
+                    while ((next=fgetc(source1))== ' '){} 
+                }
+                else {
+                    fputc(' ', target);
+                    // following " " are cut out from the input_file
+                    while ((next=fgetc(source1))== ' '){} 
+                }
+            }
+        }
+    }
+
+    fclose(source1);
+    fclose(source2);
+    fclose(target);
+
+    if (ch2 != EOF) error("message does not fit in container", "blabla, was auch immer hier rein soll"); 
 }
 
 //TODO muss man das 0-Byte "00000000" am ende von der nachricht entfernen? 
@@ -301,7 +386,7 @@ void dots_reveal(String disguised_filename, String decoded_filename)
     target = fopen(decoded_filename, "w");
 
     while ((ch = fgetc(source)) != EOF){
-        if (ch=="."){ //next characters are just read, if the one before is a dot
+        if (ch=='.'){ //next characters are just read, if the one before is a dot
             char next = fgetc(source);
             char nextNext = fgetc(source);
             if(ch == '.' && next == ' ' && nextNext == ' '){
