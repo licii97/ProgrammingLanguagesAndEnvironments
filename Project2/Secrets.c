@@ -290,21 +290,35 @@ void dots_hide(String input_filename,
 {
 }
 
+//TODO muss man das 0-Byte "00000000" am ende von der nachricht entfernen? 
 void dots_reveal(String disguised_filename, String decoded_filename)
 {
     char ch;
+    int n = 0; //counter to find end of the message 
     FILE *source, *target;
 
     source = fopen(disguised_filename, "r");
     target = fopen(decoded_filename, "w");
 
     while ((ch = fgetc(source)) != EOF){
-      char next = fgetc(source);
-      char nextNext = fgetc(source);
-      if(ch == '.' && next == ' ' && nextNext == ' ')
-        fputc(1,target);
-      if(ch == '.' && next == ' ')
-        fputc(0,target);
+        if (ch=="."){ //next characters are just read, if the one before is a dot
+            char next = fgetc(source);
+            char nextNext = fgetc(source);
+            if(ch == '.' && next == ' ' && nextNext == ' '){
+                fputc(1,target);
+                n=0;
+            }
+            if(ch == '.' && next == ' '){
+                fputc(0,target);
+                n++;
+                if (n==8) { //if it is the last bit of the end 0-byte, then end function 
+                    fclose(source);
+                    fclose(target);
+                    return ;
+                }
+            }
+        }
+      
     }
 
     fclose(source);
