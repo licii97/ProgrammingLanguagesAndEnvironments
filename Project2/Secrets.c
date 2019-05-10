@@ -65,6 +65,13 @@ Pixel hide_3Zeros_in_Pixel(Pixel p)
     return p;
 }
 
+//additional function for get image_reveal
+
+char get_bit_from_colorvalue(int value){
+    if ((value%2) == 1) return 1; 
+    else return 0; 
+}
+
 
 /* FUNCTIONS Image */
 
@@ -567,6 +574,40 @@ Int2 image_hide(Image img, Int2 n,
     return n;
 }
 
+//TODO do you have to delete 0-Byte at the end of the decoded file?
 void image_reveal(Image img, Int2 n, String decoded_filename)
 {
+    char ch; 
+    Int2 i;
+    int c = 0; //counter for 8 bits of the 0-Byte at the end
+
+    FILE *target;
+    target = fopen(decoded_filename, "w");
+
+    for(i.y = 0; i.y < n.y; i.y++) {
+        for(i.x = 0; i.x < n.x; i.x++) {
+
+            //red part of pixel
+            ch = get_bit_from_colorvalue(img[i.x][i.y].red); 
+            fputc (ch, target); 
+            if (ch == '0') c++;
+            if (c == 8) break; 
+
+            //green part of pixel
+            ch = get_bit_from_colorvalue(img[i.x][i.y].green); 
+            fputc (ch, target); 
+            if (ch == '0') c++;
+            if (c == 8) break;
+
+            //blue part of pixel
+            ch = get_bit_from_colorvalue(img[i.x][i.y].blue); 
+            fputc (ch, target); 
+            if (ch == '0') c++;
+            if (c == 8) break;
+        }
+
+        if (c == 8) break; 
+    }
+
+    fclose(target);
 }
