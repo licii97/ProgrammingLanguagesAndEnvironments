@@ -306,6 +306,7 @@ void append_ZeroByte (FILE *input, FILE *target){
                 // following " " are cut out from the input_file
                 while ((next=fgetc(input))== ' '){} 
                 n++;
+	    }
         }
     }
 
