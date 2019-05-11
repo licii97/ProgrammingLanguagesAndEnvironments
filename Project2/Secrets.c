@@ -497,20 +497,22 @@ Int2 crude_hide(Image img, Int2 n,
           result[i.x][i.y] = img[i.x][i.y];
           result[i.x][i.y].green = (int) ch;
         }
-        //put null value to green part when message ends
-        else{
-          result[i.x][i.y] = img[i.x][i.y];
-          result[i.x][i.y].green = 0;
-          break;
-        }
+        else break;
   }
 
   fclose(source);
 
+  //put null value to green part when message ends
+  result[i.x][i.y] = img[i.x][i.y];
+  result[i.x][i.y].green = 0;
+  i.x++;
+  i.y++;
+
   //copy rest of the image
-  for(i.y = 0; i.y < n.y; i.y++)
-  for(i.x = 0; i.x < n.x; i.x++)
-    result[i.x][i.y] = img[i.x][i.y];
+  for( ; i.y < n.y; i.y++)
+	for( ; i.x < n.x; i.x++) {
+		result[i.x][i.y] = img[i.x][i.y];
+	}
 
   return n;
 }
