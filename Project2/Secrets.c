@@ -12,12 +12,7 @@ Student 2: 56601 Felicitas Schmelz
 
 Comment:
 
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
+Encryption and Steganography module for C.
 
 */
 
@@ -30,7 +25,7 @@ Comment:
 typedef unsigned char Byte;
 
 char read_bit(Byte b, int position){
-    char ch = '0'; 
+    char ch = '0';
     bool bo = false;
 
     switch (position) {
@@ -361,7 +356,8 @@ void append_ZeroByte_dots_hide (FILE *input, FILE *target){
     char ch;
     char next;
 
-    //counter to get 8 Bits, when entering the function the first 0 bot is already set
+    //counter to get 8 Bits
+    // when entering the function the first 0 bot is already set
     int n = 1;
     //so you need to skip all the " " to encode current full stop as a 0
     while ((next=fgetc(input))== ' '){}
@@ -382,11 +378,11 @@ void append_ZeroByte_dots_hide (FILE *input, FILE *target){
         }
     }
 
-    //if input is ended, but there is not the full 0-Byte at the end it is an error
+    //if input is ended, but there is not the full 0-Byte at the end -> error
     if (n<8) {
         fclose(input);
         fclose(target);
-        error("0-Byte does not fit in container", "blablawas auch immer hier rein soll");
+        error("0-Byte does not fit in container", "blabla");
     }
 
 }
@@ -421,7 +417,8 @@ void dots_hide(String input_filename,
                     //call helping function to apennd 0-Byte
                     append_ZeroByte_dots_hide(source1, target);
 
-                    //when appended the 0-Byte succcessfully, you just need to close the streams
+                    //when appended the 0-Byte succcessfully,
+                    // you just need to close the streams
                     fclose(source1);
                     fclose(target);
                     return;
@@ -445,7 +442,7 @@ void dots_hide(String input_filename,
     fclose(source2);
     fclose(target);
 
-    if (ch2 != EOF) error("message does not fit in container", "blabla, was auch immer hier rein soll");
+    if (ch2 != EOF) error("message does not fit in container", "blabla");
 }
 
 //TODO muss man das 0-Byte "00000000" am ende von der nachricht entfernen?
@@ -459,7 +456,7 @@ void dots_reveal(String disguised_filename, String decoded_filename)
     target = fopen(decoded_filename, "wb");
 
     while ((ch = fgetc(source)) != EOF){
-        if (ch=='.'){ //next characters are just read, if the one before is a dot
+        if (ch=='.'){ //next characters are just read, if the one before is dot
             char next = fgetc(source);
             char nextNext = fgetc(source);
             if(ch == '.' && next == ' ' && nextNext == ' '){
@@ -469,7 +466,8 @@ void dots_reveal(String disguised_filename, String decoded_filename)
             if(ch == '.' && next == ' '){
                 fputc(0,target);
                 n++;
-                if (n==8) { //if it is the last bit of the end 0-byte, then end function
+                if (n==8) { //if it is the last bit of the end 0-byte,
+                            //then end function
                     fclose(source);
                     fclose(target);
                     return ;
@@ -517,10 +515,7 @@ Int2 crude_hide(Image img, Int2 n,
   return n;
 }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 48259ec2a30987e597a07a05fc47c843393ef630
 void crude_reveal(Image img, Int2 n, String decoded_filename)
 {
     char ch;
@@ -531,24 +526,17 @@ void crude_reveal(Image img, Int2 n, String decoded_filename)
     Int2 i;
     for(i.y = 0; i.y < n.y; i.y++)
         for(i.x = 0; i.x < n.x; i.x++) {
-<<<<<<< HEAD
             if ((img[i.x][i.y].green) == 0) break;
             fputc((char) img[i.x][i.y].green, target);
         }
 
-=======
-            //if ((img[i.x][i.y]) == 0) break;
-            fputc((img[i.x][i.y].green), target);
-        }
-        //if ((img[i.x][i.y]) == 0) break;
-    }
->>>>>>> 48259ec2a30987e597a07a05fc47c843393ef630
     fclose(target);
 }
 
 
 
-Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char current_color){
+Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j,
+            char current_color){
     //Int2 j is position in image, where message ended
     Int2 i = {0 , 0};
     int c = 0; //counter for 8 bits of the 0-Byte at the end
@@ -560,12 +548,15 @@ Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char cu
             c=c+3;
             break;
         case 'g':
-            result[j.x][j.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
-            result[j.x][j.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
+            result[j.x][j.y].green =
+                                hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
+            result[j.x][j.y].blue =
+                                hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
             c=c+2;
             break;
         case 'b':
-            result[j.x][j.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
+            result[j.x][j.y].blue =
+                                hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
             c=c+1;
             break;
         }
@@ -579,14 +570,17 @@ Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char cu
                 case 0:
                     break;
                 case 1:
-                    result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
+                    result[i.x][i.y].red =
+                                hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
                     result[i.x][i.y].green = img[i.x][i.y].green;
                     result[i.x][i.y].blue = img[i.x][i.y].blue;
                     c=c+1;
                     break;
                 case 2:
-                    result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
-                    result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
+                    result[i.x][i.y].red =
+                                hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
+                    result[i.x][i.y].green =
+                                hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
                     result[i.x][i.y].blue = img[i.x][i.y].blue;
                     c=c+2;
                     break;
@@ -601,14 +595,14 @@ Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char cu
         }
 
 
-    //if 0-Byte is successfully appended, rest of the img is just copied to result
+    //if 0-Byte is appended, rest of the img is just copied to result
     for(i.y = i.y; i.y < n.y; i.y++)
     for(i.x = i.x; i.x < n.x; i.x++) {
         result[i.x][i.y] = img[i.x][i.y];
     }
 
     //if img end before all 8 0-Bits are appended, there is an error
-    if (c < 8) error("Message does not fit in image", "blablabla, whatever belongs here");
+    if (c < 8) error("Message does not fit in image", "blablabla");
     return n;
 
 }
@@ -618,25 +612,29 @@ Int2 image_hide(Image img, Int2 n,
 {
     Byte b;
     Int2 i;
-    char str[8]; 
+    char ch;
+    char str[8];
     int c = 0; //counter for 8 bits per character byte
 
     FILE *source;
     source = fopen(message_filename, "rb");
 
     //initial read from message
-    b = fgetc(source);
+    ch = fgetc(source);
+    b = ch;
 
     for(i.y = 0; i.y < n.y; i.y++)
     for(i.x = 0; i.x < n.x; i.x++) {
         //read new byte if all bits are encoded
-        if (c = 8){
-            b = fgetc(source);
+        if (c == 8){
+            ch = fgetc(source);
+            b = ch;
             c = 0;
         }
         //red part of pixel
-        if (b != EOF){
-            result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, read_bit(b, c));
+        if (ch != EOF){
+            result[i.x][i.y].red =
+                      hide_bit_in_colorvalue(img[i.x][i.y].red, read_bit(b, c));
             c++;
         }
         else {
@@ -645,13 +643,15 @@ Int2 image_hide(Image img, Int2 n,
         }
 
         //read new byte if all bits are encoded
-        if (c = 8){
-            b = fgetc(source);
+        if (c == 8){
+            ch = fgetc(source);
+            b = ch;
             c = 0;
         }
         //green part of pixel
-        if (b != EOF){
-            result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, read_bit(b, c));
+        if (ch != EOF){
+            result[i.x][i.y].green =
+                    hide_bit_in_colorvalue(img[i.x][i.y].green, read_bit(b, c));
             c++;
         }
         else {
@@ -659,14 +659,16 @@ Int2 image_hide(Image img, Int2 n,
             append_ZeroByte_image_hide(img, n, result, i, 'g');
         }
 
-        //read new byte if all bits are encoded 
-        if (c = 8){
-            b = fgetc(source);
+        //read new byte if all bits are encoded
+        if (c == 8){
+            ch = fgetc(source);
+            b = ch;
             c = 0;
         }
         //blue part of pixel
-        if (b != EOF){
-            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, read_bit(b, c));
+        if (ch != EOF){
+            result[i.x][i.y].blue =
+                    hide_bit_in_colorvalue(img[i.x][i.y].blue, read_bit(b, c));
             c++;
         }
         else {
@@ -696,7 +698,8 @@ void image_reveal(Image img, Int2 n, String decoded_filename)
         for(i.x = 0; i.x < n.x; i.x++) {
 
             //red part of pixel
-            if (get_bit_from_colorvalue(img[i.x][i.y].red) == '1') set_bit(b , c);
+            if (get_bit_from_colorvalue(img[i.x][i.y].red) == '1')
+                set_bit(b , c);
             c++;
             if(c==8){
                 if (b == 0x00) break; //then you found the end byte
@@ -706,7 +709,8 @@ void image_reveal(Image img, Int2 n, String decoded_filename)
             }
 
             //green part of pixel
-            if (get_bit_from_colorvalue(img[i.x][i.y].green) == '1') set_bit(b , c);
+            if (get_bit_from_colorvalue(img[i.x][i.y].green) == '1')
+                set_bit(b , c);
             c++;
             if(c==8){
                 if (b == 0x00) break; //then you found the end byte
@@ -716,7 +720,8 @@ void image_reveal(Image img, Int2 n, String decoded_filename)
             }
 
             //blue part of pixel
-            if (get_bit_from_colorvalue(img[i.x][i.y].blue) == '1') set_bit(b , c);
+            if (get_bit_from_colorvalue(img[i.x][i.y].blue) == '1')
+                set_bit(b , c);
             c++;
             if(c==8){
                 if (b == 0x00) break; //then you found the end byte
