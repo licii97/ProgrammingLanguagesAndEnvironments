@@ -295,7 +295,6 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
 
     while ((ch = fgetc(source)) != EOF)
     {
-        /*
         //add a zero and let 7 bits follow
         if (n==0)
         {
@@ -313,7 +312,6 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
             fputc(str, target);
             n=0;
         }
-        */
 
     }
 
