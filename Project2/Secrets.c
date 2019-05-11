@@ -51,10 +51,10 @@ extern Pixel pixel_change_green(Pixel p, char ch)
 //additional functions for image_hide
 int hide_bit_in_colorvalue(int value, char bit)
 {
-    if ((bit == '0') && ((value % 2) == 0 )) return value; 
+    if ((bit == '0') && ((value % 2) == 0 )) return value;
     else if ((bit == '0') && ((value % 2) == 1 )) return (value - 1);
     else if ((bit == '1') && ((value % 2) == 0 )) return (value +1) ;
-    else return value; 
+    else return value;
 }
 
 Pixel hide_3Zeros_in_Pixel(Pixel p)
@@ -68,8 +68,8 @@ Pixel hide_3Zeros_in_Pixel(Pixel p)
 //additional function for get image_reveal
 
 char get_bit_from_colorvalue(int value){
-    if ((value%2) == 1) return 1; 
-    else return 0; 
+    if ((value%2) == 1) return 1;
+    else return 0;
 }
 
 
@@ -134,8 +134,10 @@ void cesar_decrypt(String encrypted_filename, int key,
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
-    		if (ch == capitalLetters[i]) ch=capitalLetters[(i-key)%26];
-            break; 
+    		if (ch == capitalLetters[i]){
+            ch=capitalLetters[(i-key)%26];
+            break;
+            }
     	}
 
     	fputc(ch, target);
@@ -233,7 +235,7 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
 
 void pack_encrypt(String input_filename, String encrypted_filename)
 {
-    int n = 0; //counter to skip every first bit of a byte 
+    int n = 0; //counter to skip every first bit of a byte
 
     char zero = 0;
     char ch;
@@ -245,19 +247,19 @@ void pack_encrypt(String input_filename, String encrypted_filename)
 
     while ((ch = fgetc(source)) != EOF)
     {
-        //every first bit of a byte is skipped 
+        //every first bit of a byte is skipped
         if ((n%8)!=0) fputc(ch, target);
-        n++; 
+        n++;
     }
 
-    /*shiftl(ch,0); -> hab keine erklärung der funktion im internet gefunden, 
-    aber ohne geht auch, halt umständlicher und ein bisschen hässlicher :D 
+    /*shiftl(ch,0); -> hab keine erklärung der funktion im internet gefunden,
+    aber ohne geht auch, halt umständlicher und ein bisschen hässlicher :D
     */
 
     //fill up wih 0 till last byte is completed
     int h1 = n/8; //number of skipped bits
     int h2 = (n-h1)%8; //number of bits that leftover for the last byte
-    //add "0" until the number if bits can be divided by 8 
+    //add "0" until the number if bits can be divided by 8
     if (h2!=0)
     {
         while (h2 < 8){
@@ -275,7 +277,7 @@ void pack_encrypt(String input_filename, String encrypted_filename)
 //TODO
 void pack_decrypt(String encrypted_filename, String decrypted_filename)
 {
-    int n = 0; //counter to skip every first bit of a byte 
+    int n = 0; //counter to skip every first bit of a byte
 
     char ch;
     char str[8];
@@ -288,16 +290,16 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
     while ((ch = fgetc(source)) != EOF)
     {
         /*
-        //add a zero and let 7 bits follow 
+        //add a zero and let 7 bits follow
         if (n==0)
         {
             str[n] = "0";
-            n++; 
+            n++;
         }
 
-        if (n!=0) 
+        if (n!=0)
         {
-            str[n] = ch; 
+            str[n] = ch;
             n++;
         }
 
@@ -317,13 +319,13 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
 /* STEGANOGRAPHY */
  //additional function to dots_hide
 void append_ZeroByte_dots_hide (FILE *input, FILE *target){
-    char ch; 
+    char ch;
     char next;
 
-    //counter to get 8 Bits, when entering the function the first 0 bot is already set 
-    int n = 1; 
+    //counter to get 8 Bits, when entering the function the first 0 bot is already set
+    int n = 1;
     //so you need to skip all the " " to encode current full stop as a 0
-    while ((next=fgetc(input))== ' '){} 
+    while ((next=fgetc(input))== ' '){}
 
     while ((ch=fgetc(input)) != EOF){
         fputc(ch, target);
@@ -332,10 +334,10 @@ void append_ZeroByte_dots_hide (FILE *input, FILE *target){
         if ((n < 8) && (ch == '.')){
             next = fgetc(input);
             fputc(next, target);
-            
+
             if (next == ' ' ){
                 // following " " are cut out from the input_file
-                while ((next=fgetc(input))== ' '){} 
+                while ((next=fgetc(input))== ' '){}
                 n++;
 	    }
         }
@@ -345,7 +347,7 @@ void append_ZeroByte_dots_hide (FILE *input, FILE *target){
     if (n<8) {
         fclose(input);
         fclose(target);
-        error("0-Byte does not fit in container", "blablawas auch immer hier rein soll"); 
+        error("0-Byte does not fit in container", "blablawas auch immer hier rein soll");
     }
 
 }
@@ -355,7 +357,7 @@ void dots_hide(String input_filename,
 {
     char ch1;
     char ch2;
-    char next; 
+    char next;
     FILE *source1, *source2, *target;
 
     source1 = fopen(input_filename, "r");
@@ -366,15 +368,15 @@ void dots_hide(String input_filename,
         fputc(ch1, target);
 
         if (ch1 == '.'){
-            next = fgetc(source1); 
+            next = fgetc(source1);
             fputc(next, target);
 
             // if after "." there is " " then it is a full stop
             if (next == ' ' ){
                 ch2 = fgetc(source2);
 
-                //if message is ended, you need to append a 0-Byte 
-                if (ch2 == EOF){ 
+                //if message is ended, you need to append a 0-Byte
+                if (ch2 == EOF){
                     fclose(source2); //you do not need message anymore
 
                     //call helping function to apennd 0-Byte
@@ -383,18 +385,18 @@ void dots_hide(String input_filename,
                     //when appended the 0-Byte succcessfully, you just need to close the streams
                     fclose(source1);
                     fclose(target);
-                    return; 
+                    return;
                 }
 
                 //read next char in message and encode either as a 0 or a 1
                 else if (ch2 == 0) {
                     // following " " are cut out from the input_file
-                    while ((next=fgetc(source1))== ' '){} 
+                    while ((next=fgetc(source1))== ' '){}
                 }
                 else {
                     fputc(' ', target);
                     // following " " are cut out from the input_file
-                    while ((next=fgetc(source1))== ' '){} 
+                    while ((next=fgetc(source1))== ' '){}
                 }
             }
         }
@@ -404,14 +406,14 @@ void dots_hide(String input_filename,
     fclose(source2);
     fclose(target);
 
-    if (ch2 != EOF) error("message does not fit in container", "blabla, was auch immer hier rein soll"); 
+    if (ch2 != EOF) error("message does not fit in container", "blabla, was auch immer hier rein soll");
 }
 
-//TODO muss man das 0-Byte "00000000" am ende von der nachricht entfernen? 
+//TODO muss man das 0-Byte "00000000" am ende von der nachricht entfernen?
 void dots_reveal(String disguised_filename, String decoded_filename)
 {
     char ch;
-    int n = 0; //counter to find end of the message 
+    int n = 0; //counter to find end of the message
     FILE *source, *target;
 
     source = fopen(disguised_filename, "r");
@@ -428,14 +430,14 @@ void dots_reveal(String disguised_filename, String decoded_filename)
             if(ch == '.' && next == ' '){
                 fputc(0,target);
                 n++;
-                if (n==8) { //if it is the last bit of the end 0-byte, then end function 
+                if (n==8) { //if it is the last bit of the end 0-byte, then end function
                     fclose(source);
                     fclose(target);
                     return ;
                 }
             }
         }
-      
+
     }
 
     fclose(source);
@@ -466,59 +468,59 @@ void crude_reveal(Image img, Int2 n, String decoded_filename)
 
 
 
-Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char current_color){ 
+Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char current_color){
     //Int2 j is position in image, where message ended
-    Int2 i = {0 , 0}; 
+    Int2 i = {0 , 0};
     int c = 0; //counter for 8 bits of the 0-Byte at the end
 
     //different cases at which color value of the pixel the message ended
-    switch (current_color){ 
-        case 'r': 
-            result[j.x][j.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]); 
+    switch (current_color){
+        case 'r':
+            result[j.x][j.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]);
             c=c+3;
-            break; 
+            break;
         case 'g':
             result[j.x][j.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
             result[j.x][j.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
             c=c+2;
-            break; 
-        case 'b': 
+            break;
+        case 'b':
             result[j.x][j.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
             c=c+1;
-            break;            
-        } 
+            break;
+        }
 
 
     //next 8-c Bits have to be 0
     for(i.y = j.y; i.y < n.y; i.y++){
         for(i.x = j.x; i.x < n.x; i.x++) {
             //different cases of how many bits of the 0-byte are left
-            switch ((8-c)){ 
-                case 0:  
-                    break; 
+            switch ((8-c)){
+                case 0:
+                    break;
                 case 1:
                     result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
                     result[i.x][i.y].green = img[i.x][i.y].green;
                     result[i.x][i.y].blue = img[i.x][i.y].blue;
                     c=c+1;
-                    break; 
-                case 2: 
+                    break;
+                case 2:
                     result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, 0);
                     result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
                     result[i.x][i.y].blue = img[i.x][i.y].blue;
                     c=c+2;
-                    break;  
-                default: 
-                    result[i.x][i.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]); 
+                    break;
+                default:
+                    result[i.x][i.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]);
                     c=c+3;
-                    break;          
-                }  
-                if (c==8) break; 
+                    break;
+                }
+                if (c==8) break;
             }
             if (c==8) break;
         }
-         
-        
+
+
     //if 0-Byte is successfully appended, rest of the img is just copied to result
     for(i.y = i.y; i.y < n.y; i.y++)
     for(i.x = i.x; i.x < n.x; i.x++) {
@@ -528,13 +530,13 @@ Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char cu
     //if img end before all 8 0-Bits are appended, there is an error
     if (c < 8) error("Message does not fit in image", "blablabla, whatever belongs here");
     return n;
-    
+
 }
 
 Int2 image_hide(Image img, Int2 n,
 					String message_filename, Image result)
 {
-    char ch; 
+    char ch;
     Int2 i;
     int c = 0; //counter for 8 bits of the 0-Byte at the end
 
@@ -543,31 +545,31 @@ Int2 image_hide(Image img, Int2 n,
 
     for(i.y = 0; i.y < n.y; i.y++)
     for(i.x = 0; i.x < n.x; i.x++) {
-        //red part of pixel 
+        //red part of pixel
         ch = fgetc(source);
-        if (ch != EOF) 
+        if (ch != EOF)
             result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, ch);
         else {
             fclose(source);
-            append_ZeroByte_image_hide(img, n, result, i, 'r'); 
+            append_ZeroByte_image_hide(img, n, result, i, 'r');
         }
 
-        //green part of pixel 
+        //green part of pixel
         ch = fgetc(source);
-        if (ch != EOF) 
+        if (ch != EOF)
             result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, ch);
         else {
             fclose(source);
-            append_ZeroByte_image_hide(img, n, result, i, 'g'); 
+            append_ZeroByte_image_hide(img, n, result, i, 'g');
         }
 
-        //blue part of pixel 
+        //blue part of pixel
         ch = fgetc(source);
-        if (ch != EOF) 
+        if (ch != EOF)
             result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, ch);
         else {
             fclose(source);
-            append_ZeroByte_image_hide(img, n, result, i, 'b'); 
+            append_ZeroByte_image_hide(img, n, result, i, 'b');
         }
     }
 
@@ -581,7 +583,7 @@ Int2 image_hide(Image img, Int2 n,
 //TODO do you have to delete 0-Byte at the end of the decoded file?
 void image_reveal(Image img, Int2 n, String decoded_filename)
 {
-    char ch; 
+    char ch;
     Int2 i;
     int c = 0; //counter for 8 bits of the 0-Byte at the end
 
@@ -592,25 +594,25 @@ void image_reveal(Image img, Int2 n, String decoded_filename)
         for(i.x = 0; i.x < n.x; i.x++) {
 
             //red part of pixel
-            ch = get_bit_from_colorvalue(img[i.x][i.y].red); 
-            fputc (ch, target); 
+            ch = get_bit_from_colorvalue(img[i.x][i.y].red);
+            fputc (ch, target);
             if (ch == '0') c++;
-            if (c == 8) break; 
+            if (c == 8) break;
 
             //green part of pixel
-            ch = get_bit_from_colorvalue(img[i.x][i.y].green); 
-            fputc (ch, target); 
+            ch = get_bit_from_colorvalue(img[i.x][i.y].green);
+            fputc (ch, target);
             if (ch == '0') c++;
             if (c == 8) break;
 
             //blue part of pixel
-            ch = get_bit_from_colorvalue(img[i.x][i.y].blue); 
-            fputc (ch, target); 
+            ch = get_bit_from_colorvalue(img[i.x][i.y].blue);
+            fputc (ch, target);
             if (ch == '0') c++;
             if (c == 8) break;
         }
 
-        if (c == 8) break; 
+        if (c == 8) break;
     }
 
     fclose(target);
