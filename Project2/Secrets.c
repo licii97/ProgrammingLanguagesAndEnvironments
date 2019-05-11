@@ -208,6 +208,10 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
 
     pi = fopen(pi_filename, "r");
 
+    //first two digits from pi file aren't used
+    key = fgetc(pi);
+    key = fgetc(pi);
+
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
     		if (ch == capitalLetters[i]){
