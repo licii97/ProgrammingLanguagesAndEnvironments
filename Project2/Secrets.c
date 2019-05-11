@@ -135,7 +135,8 @@ void cesar_decrypt(String encrypted_filename, int key,
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
     		if (ch == capitalLetters[i]){
-            ch=capitalLetters[(i-key)%26];
+            if (key > i) ch=capitalLetters[(i-key)+26];
+            else ch=capitalLetters[(i-key)-26];
             break;
             }
     	}
@@ -221,7 +222,9 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     				key = fgetc(pi);
     			}
 
-    			ch=capitalLetters[((i-key)%26)];
+          if (key > i) ch=capitalLetters[(i-key)+26];
+          else ch=capitalLetters[(i-key)-26];
+          break;
     		}
     	}
 
