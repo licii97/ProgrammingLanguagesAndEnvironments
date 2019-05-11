@@ -211,7 +211,7 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
     		if (ch == capitalLetters[i]){
-                key = fgetc(pi);
+                key = (int) fgetc(pi);
     			if (key == EOF){
     				fclose(pi);
     				pi = fopen(pi_filename, "r");
@@ -220,12 +220,12 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     				key = fgetc(pi);
     				key = fgetc(pi);
     				//third digit is first one to use
-    				key = fgetc(pi);
+    				key = (int) fgetc(pi);
     			}
 
-          if (key > i) ch=capitalLetters[(i-key)+26];
-          else ch=capitalLetters[(i-key)];
-          break;
+                if (key > i) ch=capitalLetters[(i-key)+26];
+                else ch=capitalLetters[(i-key)];
+                break;
     		}
     	}
 
