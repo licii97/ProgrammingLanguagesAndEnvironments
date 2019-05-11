@@ -464,22 +464,22 @@ void crude_reveal(Image img, Int2 n, String decoded_filename)
 
 Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char current_color){ 
     //Int2 j is position in image, where message ended
-    Int2 i; 
+    Int2 i = {0 , 0}; 
     int c = 0; //counter for 8 bits of the 0-Byte at the end
 
     //different cases at which color value of the pixel the message ended
     switch (current_color){ 
         case 'r': 
-            result[i.x][i.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]); 
+            result[j.x][j.y] = hide_3Zeros_in_Pixel(img[i.x][i.y]); 
             c=c+3;
             break; 
         case 'g':
-            result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
-            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
+            result[j.x][j.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, 0);
+            result[j.x][j.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
             c=c+2;
             break; 
         case 'b': 
-            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
+            result[j.x][j.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, 0);
             c=c+1;
             break;            
         } 
