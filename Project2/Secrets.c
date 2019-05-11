@@ -417,8 +417,7 @@ void dots_hide(String input_filename,
                     //call helping function to apennd 0-Byte
                     append_ZeroByte_dots_hide(source1, target);
 
-                    //when appended the 0-Byte succcessfully,
-                    // you just need to close the streams
+                    //when appended the 0-Byte succcessfully, you just need to close the streams
                     fclose(source1);
                     fclose(target);
                     return;
@@ -442,35 +441,48 @@ void dots_hide(String input_filename,
     fclose(source2);
     fclose(target);
 
-    if (ch2 != EOF) error("message does not fit in container", "blabla");
+    if (ch2 != EOF) error("message does not fit in container", "blabla, was auch immer hier rein soll");
 }
 
 //TODO muss man das 0-Byte "00000000" am ende von der nachricht entfernen?
 void dots_reveal(String disguised_filename, String decoded_filename)
 {
     char ch;
+    int c = 0; 
     int n = 0; //counter to find end of the message
     FILE *source, *target;
+    Byte b = 0x00;
 
     source = fopen(disguised_filename, "r");
     target = fopen(decoded_filename, "wb");
 
     while ((ch = fgetc(source)) != EOF){
-        if (ch=='.'){ //next characters are just read, if the one before is dot
+        if (ch=='.'){ //next characters are just read, if the one before is a dot
             char next = fgetc(source);
             char nextNext = fgetc(source);
             if(ch == '.' && next == ' ' && nextNext == ' '){
-                fputc(1,target);
+                set_bit(b, c);
+                c++;
+                if (c == 8 ){
+                    fputc(b, target);
+                    b = 0x00; 
+                    c = 0;
+                    n = 0;
+                }
                 n=0;
             }
             if(ch == '.' && next == ' '){
-                fputc(0,target);
-                n++;
-                if (n==8) { //if it is the last bit of the end 0-byte,
-                            //then end function
-                    fclose(source);
-                    fclose(target);
-                    return ;
+                c++;
+                if (c == 8 ){
+                    fputc(b, target);
+                    b = 0x00; 
+                    c = 0;
+                    n++;
+                    if (n==8) { //if it is the last bit of the end 0-byte, then end function
+                        fclose(source);
+                        fclose(target);
+                        return ;
+                    }
                 }
             }
         }
