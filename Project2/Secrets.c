@@ -223,8 +223,6 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     				//first two digits from pi file aren't used
     				key = fgetc(pi);
     				key = fgetc(pi);
-    				//third digit is first one to use
-    				key = (int) fgetc(pi);
     			}
                 key -= 48;
                 if (key > i) ch=capitalLetters[(i-key)+26];
