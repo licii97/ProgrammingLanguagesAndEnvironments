@@ -181,7 +181,9 @@ void pi_encrypt(String input_filename, String pi_filename,
     				//third digit is first one to use
     				key = fgetc(pi);
     			}
-    			ch=capitalLetters[((i+key)%26)];
+          key -= 48;
+          ch=capitalLetters[(i+key)%26];
+          break;
     		}
     	}
 
@@ -224,10 +226,10 @@ void pi_decrypt(String encrypted_filename, String pi_filename,
     				key = fgetc(pi);
     				key = fgetc(pi);
     			}
-                key -= 48;
-                if (key > i) ch=capitalLetters[(i-key)+26];
-                else ch=capitalLetters[(i-key)];
-                break;
+          key -= 48;
+          if (key > i) ch=capitalLetters[(i-key)+26];
+          else ch=capitalLetters[(i-key)];
+          break;
     		}
     	}
 
@@ -310,7 +312,7 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
 
         if (n==8){
             for (int x = 0; x < 8 ; x++){
-                fputc(str[x], target);  
+                fputc(str[x], target);
             }
             n=0;
         }
@@ -461,30 +463,44 @@ Int2 crude_hide(Image img, Int2 n,
   Int2 i;
   for(i.y = 0; i.y < n.y; i.y++)
   for(i.x = 0; i.x < n.x; i.x++) {
-        result[i.x][i.y] = pixel_change_green(img[i.x][i.y],ch);
+        //copy image but change the green part
+        if ((ch = fgetc(source)) != EOF){
+          result[i.x][i.y] = img[i.x][i.y];
+          result[i.x][i.y].green = (int) ch;
+        }
+        //put null value to green part when message ends
+        else{
+          result[i.x][i.y] = img[i.x][i.y];
+          result[i.x][i.y].green = 0;
+          break;
+        }
   }
+
   fclose(source);
+
+  //copy rest of the image
+  for(i.y = 0; i.y < n.y; i.y++)
+  for(i.x = 0; i.x < n.x; i.x++)
+    result[i.x][i.y] = img[i.x][i.y];
+
   return n;
 }
 
-//TODO Find 0-byte at the end
 void crude_reveal(Image img, Int2 n, String decoded_filename)
 {
     char ch;
-    FILE *source;
+    FILE *target;
 
     target = fopen(decoded_filename, "wb");
 
     Int2 i;
-    for(i.y = 0; i.y < n.y; i.y++){
+    for(i.y = 0; i.y < n.y; i.y++)
         for(i.x = 0; i.x < n.x; i.x++) {
-            //if ((img[i.x][i.y]) == ) break;
-            fputc(img[i.x][i.y], target);
+            if ((img[i.x][i.y].green) == 0) break;
+            fputc((char) img[i.x][i.y].green, target);
         }
-        //if ((img[i.x][i.y]) == ) break;
-    }
+
     fclose(target);
-    return n;
 }
 
 
