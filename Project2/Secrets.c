@@ -467,9 +467,24 @@ Int2 crude_hide(Image img, Int2 n,
   return n;
 }
 
-//TODO
+//TODO Find 0-byte at the end
 void crude_reveal(Image img, Int2 n, String decoded_filename)
 {
+    char ch;
+    FILE *source;
+
+    target = fopen(decoded_filename, "wb");
+
+    Int2 i;
+    for(i.y = 0; i.y < n.y; i.y++){
+        for(i.x = 0; i.x < n.x; i.x++) {
+            //if ((img[i.x][i.y]) == ) break;
+            fputc(img[i.x][i.y], target);
+        }
+        //if ((img[i.x][i.y]) == ) break;
+    }
+    fclose(target);
+    return n;
 }
 
 
