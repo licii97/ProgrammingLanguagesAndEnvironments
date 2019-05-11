@@ -298,7 +298,7 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
         //add a zero and let 7 bits follow
         if (n==0)
         {
-            str[n] = "0";
+            str[n] = '0';
             n++;
         }
 
@@ -309,7 +309,9 @@ void pack_decrypt(String encrypted_filename, String decrypted_filename)
         }
 
         if (n==8){
-            fputc(str, target);
+            for (int x = 0; x < 8 ; x++){
+                fputc(str[x], target);  
+            }
             n=0;
         }
 
