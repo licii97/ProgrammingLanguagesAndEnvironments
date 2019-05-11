@@ -367,7 +367,7 @@ void dots_hide(String input_filename,
     FILE *source1, *source2, *target;
 
     source1 = fopen(input_filename, "r");
-    source2 = fopen(message_filename, "r");
+    source2 = fopen(message_filename, "rb");
     target = fopen(disguised_filename, "w");
 
     while ((ch1=fgetc(source1)) != EOF){
@@ -423,7 +423,7 @@ void dots_reveal(String disguised_filename, String decoded_filename)
     FILE *source, *target;
 
     source = fopen(disguised_filename, "r");
-    target = fopen(decoded_filename, "w");
+    target = fopen(decoded_filename, "wb");
 
     while ((ch = fgetc(source)) != EOF){
         if (ch=='.'){ //next characters are just read, if the one before is a dot
@@ -547,7 +547,7 @@ Int2 image_hide(Image img, Int2 n,
     int c = 0; //counter for 8 bits of the 0-Byte at the end
 
     FILE *source;
-    source = fopen(message_filename, "r");
+    source = fopen(message_filename, "rb");
 
     for(i.y = 0; i.y < n.y; i.y++)
     for(i.x = 0; i.x < n.x; i.x++) {
@@ -594,7 +594,7 @@ void image_reveal(Image img, Int2 n, String decoded_filename)
     int c = 0; //counter for 8 bits of the 0-Byte at the end
 
     FILE *target;
-    target = fopen(decoded_filename, "w");
+    target = fopen(decoded_filename, "wb");
 
     for(i.y = 0; i.y < n.y; i.y++) {
         for(i.x = 0; i.x < n.x; i.x++) {
