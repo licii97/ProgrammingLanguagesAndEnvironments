@@ -107,7 +107,10 @@ void cesar_encrypt(String input_filename, int key, String encrypted_filename)
 
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
-    		if (ch == capitalLetters[i]) ch=capitalLetters[((i+key)%26)];
+    		if (ch == capitalLetters[i]) {
+                ch=capitalLetters[((i+key)%26)];
+                break;
+            }
     	}
 
     	fputc(ch, target);
@@ -132,6 +135,7 @@ void cesar_decrypt(String encrypted_filename, int key,
     while ((ch = fgetc(source)) != EOF){
     	for (int i = 0; i<26; i++){
     		if (ch == capitalLetters[i]) ch=capitalLetters[(i-key)%26];
+            break; 
     	}
 
     	fputc(ch, target);
