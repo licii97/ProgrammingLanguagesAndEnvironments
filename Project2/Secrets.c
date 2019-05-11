@@ -538,7 +538,7 @@ void crude_reveal(Image img, Int2 n, String decoded_filename)
 
 =======
             //if ((img[i.x][i.y]) == 0) break;
-            //fputc((img[i.x][i.y]), target);
+            fputc((img[i.x][i.y].green), target);
         }
         //if ((img[i.x][i.y]) == 0) break;
     }
