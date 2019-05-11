@@ -29,6 +29,37 @@ Comment:
 /* FUNCTIONS Byte */
 typedef unsigned char Byte;
 
+char read_bit(Byte b, int position){
+    char ch = '0'; 
+    bool bo = false;
+
+    switch (position) {
+        case 0: return ((b & 0x80) == 0x80);
+        case 1: return ((b & 0x40) == 0x40);
+        case 2: return ((b & 0x20) == 0x20);
+        case 3: return ((b & 0x10) == 0x10);
+        case 4: return ((b & 0x08) == 0x08);
+        case 5: return ((b & 0x04) == 0x04);
+        case 6: return ((b & 0x02) == 0x02);
+        case 7: return ((b & 0x01) == 0x01);
+        default: return false;
+        }
+}
+
+Byte set_bit(Byte b, int position){
+    switch (position) {
+        case 0: return (Byte) (b | 0x80);
+        case 1: return (Byte) (b | 0x40);
+        case 2: return (Byte) (b | 0x20);
+        case 3: return (Byte) (b | 0x10);
+        case 4: return (Byte) (b | 0x08);
+        case 5: return (Byte) (b | 0x04);
+        case 6: return (Byte) (b | 0x02);
+        case 7: return (Byte) (b | 0x01);
+        default: return 0;
+    }
+}
+
 // shift left and insert a new least significant bit
 #define shiftl(byte, newbit)    ( (byte) * 2 + (newbit) )
 
@@ -41,7 +72,7 @@ typedef unsigned char Byte;
 
 /* FUNCTIONS Pixel */
 
-//additional function fpr crude_hide
+//additional function for crude_hide
 extern Pixel pixel_change_green(Pixel p, char ch)
 {
   p.green=(int) ch;
@@ -49,11 +80,11 @@ extern Pixel pixel_change_green(Pixel p, char ch)
 }
 
 //additional functions for image_hide
-int hide_bit_in_colorvalue(int value, char bit)
+int hide_bit_in_colorvalue(int value, bool bit)
 {
-    if ((bit == '0') && ((value % 2) == 0 )) return value;
-    else if ((bit == '0') && ((value % 2) == 1 )) return (value - 1);
-    else if ((bit == '1') && ((value % 2) == 0 )) return (value +1) ;
+    if ((!bit) && ((value % 2) == 0 )) return value;
+    else if ((!bit) && ((value % 2) == 1 )) return (value - 1);
+    else if ((bit) && ((value % 2) == 0 )) return (value +1) ;
     else return value;
 }
 
@@ -486,6 +517,10 @@ Int2 crude_hide(Image img, Int2 n,
   return n;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 48259ec2a30987e597a07a05fc47c843393ef630
 void crude_reveal(Image img, Int2 n, String decoded_filename)
 {
     char ch;
@@ -496,10 +531,18 @@ void crude_reveal(Image img, Int2 n, String decoded_filename)
     Int2 i;
     for(i.y = 0; i.y < n.y; i.y++)
         for(i.x = 0; i.x < n.x; i.x++) {
+<<<<<<< HEAD
             if ((img[i.x][i.y].green) == 0) break;
             fputc((char) img[i.x][i.y].green, target);
         }
 
+=======
+            //if ((img[i.x][i.y]) == 0) break;
+            //fputc((img[i.x][i.y]), target);
+        }
+        //if ((img[i.x][i.y]) == 0) break;
+    }
+>>>>>>> 48259ec2a30987e597a07a05fc47c843393ef630
     fclose(target);
 }
 
@@ -573,37 +616,59 @@ Int2 append_ZeroByte_image_hide(Image img, Int2 n, Image result, Int2 j, char cu
 Int2 image_hide(Image img, Int2 n,
 					String message_filename, Image result)
 {
-    char ch;
+    Byte b;
     Int2 i;
-    int c = 0; //counter for 8 bits of the 0-Byte at the end
+    char str[8]; 
+    int c = 0; //counter for 8 bits per character byte
 
     FILE *source;
     source = fopen(message_filename, "rb");
 
+    //initial read from message
+    b = fgetc(source);
+
     for(i.y = 0; i.y < n.y; i.y++)
     for(i.x = 0; i.x < n.x; i.x++) {
+        //read new byte if all bits are encoded
+        if (c = 8){
+            b = fgetc(source);
+            c = 0;
+        }
         //red part of pixel
-        ch = fgetc(source);
-        if (ch != EOF)
-            result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, ch);
+        if (b != EOF){
+            result[i.x][i.y].red = hide_bit_in_colorvalue(img[i.x][i.y].red, read_bit(b, c));
+            c++;
+        }
         else {
             fclose(source);
             append_ZeroByte_image_hide(img, n, result, i, 'r');
         }
 
+        //read new byte if all bits are encoded
+        if (c = 8){
+            b = fgetc(source);
+            c = 0;
+        }
         //green part of pixel
-        ch = fgetc(source);
-        if (ch != EOF)
-            result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, ch);
+        if (b != EOF){
+            result[i.x][i.y].green = hide_bit_in_colorvalue(img[i.x][i.y].green, read_bit(b, c));
+            c++;
+        }
         else {
             fclose(source);
             append_ZeroByte_image_hide(img, n, result, i, 'g');
         }
 
+        //read new byte if all bits are encoded 
+        if (c = 8){
+            b = fgetc(source);
+            c = 0;
+        }
         //blue part of pixel
-        ch = fgetc(source);
-        if (ch != EOF)
-            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, ch);
+        if (b != EOF){
+            result[i.x][i.y].blue = hide_bit_in_colorvalue(img[i.x][i.y].blue, read_bit(b, c));
+            c++;
+        }
         else {
             fclose(source);
             append_ZeroByte_image_hide(img, n, result, i, 'b');
@@ -620,9 +685,9 @@ Int2 image_hide(Image img, Int2 n,
 //TODO do you have to delete 0-Byte at the end of the decoded file?
 void image_reveal(Image img, Int2 n, String decoded_filename)
 {
-    char ch;
+    Byte b;
     Int2 i;
-    int c = 0; //counter for 8 bits of the 0-Byte at the end
+    int c = 0; //counter for 8 bits of a byte
 
     FILE *target;
     target = fopen(decoded_filename, "wb");
@@ -631,22 +696,34 @@ void image_reveal(Image img, Int2 n, String decoded_filename)
         for(i.x = 0; i.x < n.x; i.x++) {
 
             //red part of pixel
-            ch = get_bit_from_colorvalue(img[i.x][i.y].red);
-            fputc (ch, target);
-            if (ch == '0') c++;
-            if (c == 8) break;
+            if (get_bit_from_colorvalue(img[i.x][i.y].red) == '1') set_bit(b , c);
+            c++;
+            if(c==8){
+                if (b == 0x00) break; //then you found the end byte
+                fputc (b, target);
+                c = 0;
+                b = 0x00;
+            }
 
             //green part of pixel
-            ch = get_bit_from_colorvalue(img[i.x][i.y].green);
-            fputc (ch, target);
-            if (ch == '0') c++;
-            if (c == 8) break;
+            if (get_bit_from_colorvalue(img[i.x][i.y].green) == '1') set_bit(b , c);
+            c++;
+            if(c==8){
+                if (b == 0x00) break; //then you found the end byte
+                fputc (b, target);
+                c = 0;
+                b = 0x00;
+            }
 
             //blue part of pixel
-            ch = get_bit_from_colorvalue(img[i.x][i.y].blue);
-            fputc (ch, target);
-            if (ch == '0') c++;
-            if (c == 8) break;
+            if (get_bit_from_colorvalue(img[i.x][i.y].blue) == '1') set_bit(b , c);
+            c++;
+            if(c==8){
+                if (b == 0x00) break; //then you found the end byte
+                fputc (b, target);
+                c = 0;
+                b = 0x00;
+            }
         }
 
         if (c == 8) break;
