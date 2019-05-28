@@ -352,16 +352,32 @@ function onLoadAction(event) {
 	cyGraph = CyGraph.sampleGraph();
 }
 
-function op1Action(event) {
-	alert("OP1 " + event);
+function reachable(event) {
+	alert("reachable " + event);
 }
 
-function op2Action(event) {
-	alert("OP2 " + event);
+function productive(event) {
+	alert("productive " + event);
 }
 
-function op3Action(event) {
-	alert("OP3 " + event);
+function useful(event) {
+	alert("useful " + event);
+}
+
+function generate(event) {
+	alert("generate " + event);
+}
+
+function accept(event) {
+	alert("accept? " + event);
+}
+
+function step(event) {
+	alert("step " + event);
+}
+
+function animation(event) {
+	alert("animation " + event);
 }
 
 function fileSelectAction(event) {
