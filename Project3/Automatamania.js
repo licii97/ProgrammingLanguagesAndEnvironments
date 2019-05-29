@@ -179,7 +179,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 	}
 }
 
-/*const abc = new FiniteAutomaton({
+const abc = new FiniteAutomaton({
 	initialState: "START",
 	transitions: [
 			["START",'a',"A"], ["START",'b',"START"],
@@ -213,7 +213,7 @@ function testAll() {
 
 //Â testAll();
 
-*/
+
 
 /* CYTOSCAPE GRAPHS AND USER INTERFACE -------------------------------------- */
 
@@ -282,7 +282,15 @@ const cyGraphStyle = {
 		{ selector: '.eh-ghost-edge.eh-preview-active',
 		  style: {
 			'opacity': 0
-		  }}
+		  }},
+
+		//selector for giving reachable nodes a purple color
+		{
+			selector: '.reachableNode',
+			style: {
+				'color': 'purple'
+			}
+		}
 	  ]
 };
 
@@ -344,6 +352,7 @@ class CyGraph {
 			abc
 		);
 	}
+
 }
 
 
@@ -353,31 +362,58 @@ function onLoadAction(event) {
 	cyGraph = CyGraph.sampleGraph();
 }
 
-function reachableF(event) {
-	alert("reachable " + event);
+function reachable_F(event) {
+	selectedNodes = [];
+	reachableNodes = []; 
+	cyGraph.cy.elements(":selected").each(function(elem){
+		selectedNodes.push(elem.id());
+		})
+
+	console.log(selectedNodes);
+
+	switch (selectedNodes.length){
+		case 0 : 
+			cyGraph.cy.$('#START').select();
+			reachableNodes = cyGraph.fa.reachable();
+			break; 
+		case 1 : 
+			reachableNodes = canonical(cyGraph.fa.reachableX(selectedNodes[0], cyGraph.fa.transitions));
+			break; 
+		default : 
+			alert("More than one node selected");
+			break;
+	}
+
+	console.log(reachableNodes);
+
+	reachableNodes.forEach(
+		function(elem){
+			console.log(cyGraph.cy.elements(id = elem)); //cyGraph.cy.element(elem).addClass("reachableNode");
+		})
 }
 
-function productive_(event) {
+function productive_F(event) {
+
 	alert("productive " + event);
 }
 
-function useful_(event) {
+function useful_F(event) {
 	alert("useful " + event);
 }
 
-function generate_(event) {
+function generate_F(event) {
 	alert("generate " + event);
 }
 
-function accept_(event) {
+function accept_F(event) {
 	alert("accept? " + event);
 }
 
-function step_(event) {
+function step_F(event) {
 	alert("step " + event);
 }
 
-function animation_(event) {
+function animation_F(event) {
 	alert("animation " + event);
 }
 
@@ -387,9 +423,7 @@ function fileSelectAction(event) {
 		return;
 	const reader = new FileReader();
 	//callback function wird ausgeführt wenn reasAsFile abgeschlossen 
-	reader.onload = function(event) { CyGraph.load(event.target.result); };
+	reader.onload = function(event) { cyGraph = CyGraph.load(event.target.result); };
 	reader.readAsText(file);
-	//console.log(reader);
-
 }
 
