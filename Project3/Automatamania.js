@@ -179,7 +179,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 	}
 }
 
-const abc = new FiniteAutomaton({
+/*const abc = new FiniteAutomaton({
 	initialState: "START",
 	transitions: [
 			["START",'a',"A"], ["START",'b',"START"],
@@ -213,6 +213,7 @@ function testAll() {
 
 //Â testAll();
 
+*/
 
 /* CYTOSCAPE GRAPHS AND USER INTERFACE -------------------------------------- */
 
@@ -298,8 +299,8 @@ class CyGraph {
 
 	static build(fa) {
 		// alert("TO DO: convert the FA into the format required by Cytoscape (see sampleGraph)")
-		const nodes = []; //IDEA: fa.getStates().map(x => { data: { id: x, name: x } });
-		const edges = [];
+		const nodes = fa.getStates().map(function(x){return { data: { id: x, name: x } }});
+		const edges = fa.transitions.map(function(x){return { data: { source: x[0], symbol: x[1], target: x[2] } }} ) ;
 		return new CyGraph(nodes, edges, fa);
 	}
 
@@ -352,31 +353,31 @@ function onLoadAction(event) {
 	cyGraph = CyGraph.sampleGraph();
 }
 
-function reachable(event) {
+function reachableF(event) {
 	alert("reachable " + event);
 }
 
-function productive(event) {
+function productive_(event) {
 	alert("productive " + event);
 }
 
-function useful(event) {
+function useful_(event) {
 	alert("useful " + event);
 }
 
-function generate(event) {
+function generate_(event) {
 	alert("generate " + event);
 }
 
-function accept(event) {
+function accept_(event) {
 	alert("accept? " + event);
 }
 
-function step(event) {
+function step_(event) {
 	alert("step " + event);
 }
 
-function animation(event) {
+function animation_(event) {
 	alert("animation " + event);
 }
 
@@ -385,6 +386,10 @@ function fileSelectAction(event) {
 	if( file == undefined ) // if canceled
 		return;
 	const reader = new FileReader();
+	//callback function wird ausgeführt wenn reasAsFile abgeschlossen 
 	reader.onload = function(event) { CyGraph.load(event.target.result); };
 	reader.readAsText(file);
+	//console.log(reader);
+
 }
+

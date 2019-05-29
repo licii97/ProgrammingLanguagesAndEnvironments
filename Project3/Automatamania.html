@@ -12,11 +12,17 @@
 	<SCRIPT src="https://cytoscape.org/cytoscape.js-edgehandles/cytoscape-edgehandles.js"></SCRIPT>
 	<SCRIPT type="text/javascript" src="Automatamania.js"></SCRIPT>
 	<SCRIPT>
-	var states = 0;
-	var acceptStates = 0;
-	var alphabetSize = 0;
-	var det = "non-deterministic"
+		var states = 0;
+		var acceptStates = 0;
+		var alphabetSize = 0;
+		var det = "non-deterministic"
 
+		function defineValues(statesF, acceptStatesF, alphabetSizeF, detF){
+			states = statesF; 
+			acceptStates = acceptStatesF; 
+			alphabetSize = alphabetSizeF; 
+			det = detF; 
+		}
 	</SCRIPT>
 	<STYLE>
 		html, body { font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif; font-size: 14px; height: 100%; width: 100%; padding: 0; margin: 0;}
@@ -65,22 +71,22 @@
 <DIV class="btn-group">
 <UL>
 	<li><INPUT ID="input" type="text" placeholder="Input" value="">
-	<li><BUTTON ID="Reachable" ONCLICK="reachable(event)">Reachable</BUTTON>
-	<li><BUTTON ID="Productive" ONCLICK="productive(event)">Productive</BUTTON>
-	<li><BUTTON ID="Useful" ONCLICK="useful(event)">Useful</BUTTON>
-	<li><BUTTON ID="Generate" ONCLICK="generate(event)">Generate</BUTTON>
-	<li><BUTTON ID="Accept" ONCLICK="accept(event)">Accept?</BUTTON>
-	<li><BUTTON ID="Step" ONCLICK="step(event)">Step</BUTTON>
-	<li><BUTTON ID="Animation" ONCLICK="animation(event)">Aniomation</BUTTON>
+	<li><BUTTON ID="Reachable" ONCLICK="reachable_(event)">Reachable</BUTTON>
+	<li><BUTTON ID="Productive" ONCLICK="productive_(event)">Productive</BUTTON>
+	<li><BUTTON ID="Useful" ONCLICK="useful_(event)">Useful</BUTTON>
+	<li><BUTTON ID="Generate" ONCLICK="generate_(event)">Generate</BUTTON>
+	<li><BUTTON ID="Accept" ONCLICK="accept_(event)">Accept?</BUTTON>
+	<li><BUTTON ID="Step" ONCLICK="step_(event)">Step</BUTTON>
+	<li><BUTTON ID="Animation" ONCLICK="animation_(event)">Aniomation</BUTTON>
 	<li><INPUT ID="file-select" TYPE='file' ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'>
 </UL>
 
 <b> Automaton Statistics</b> <br />
 <UL>
-	<li>Number of states: <script>document.write(states)</script>
-	<li>Number of accept states: <script>document.write(acceptStates)</script>
-	<li>Aphabet size: <script>document.write(alphabetSize)</script>
-	<li> <script>document.write(det)</script>
+	<li>Number of states: <span ID="states"> <script>document.write(states)</script></span>
+	<li>Number of accept states: <span ID="acceptStates"><script>document.write(acceptStates)</script></span>
+	<li>Aphabet size: <span ID="alphabetSize"><script>document.write(alphabetSize)</script></span>
+	<li> <span ID="det"><script>document.write(det)</script></span>
 </UL>
 
 </DIV>
