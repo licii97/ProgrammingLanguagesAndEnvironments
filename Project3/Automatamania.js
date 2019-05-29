@@ -1,6 +1,6 @@
 /*
  * Automatamania
- * 
+ *
 
 Student 1: 56554 Pascal Maximilian Engel
 Student 2: 56601 Felicitas Schmelz
@@ -21,7 +21,7 @@ INSIDE THIS FILE, YOU CAN CHANGE EVERYTHING YOU WANT!
 
 /*
 DOCUMENTATION
- 
+
 HTML and DOM documentation:
 	http://ctp.di.fct.unl.pt/miei/lap/teoricas/17.html
 	https://www.w3schools.com/html/default.asp
@@ -122,7 +122,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 		this.transitions = fa.transitions;
 		this.acceptStates = fa.acceptStates;
 	}
-	
+
 	getStates() {
 		return canonical(
 			[this.initialState].
@@ -130,18 +130,18 @@ class FiniteAutomaton extends AbstractAutomaton {
 			concat(this.transitions.map(([_0,_1,s]) => s)).
 			concat(this.acceptStates)
 		);
-	}	
+	}
 
 	gcut(s, ts) {
 		return [ts.filter(([z,_0,_1]) => z == s),
 				ts.filter(([z,_0,_1]) => z != s)];
 	}
-	
+
 	reachableX(s, ts) {
 		const [x, xs] = this.gcut(s,ts);
 		return cons(s, flatMap(([_0,_1,z]) => this.reachableX(z,xs), x));
 	}
-	
+
 	reachable() {
 		return canonical(this.reachableX(this.initialState, this.transitions));
 	}
@@ -153,7 +153,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 							this.reachableX(s, this.transitions)));
 		return allStates.filter(reachAccepted);
 	}
-	
+
 	transitionsFor(s, symb) {
 		return this.transitions.filter(([s1,symb1,_]) =>
 									s == s1 && symb == symb1);
@@ -176,7 +176,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 
 	accept(w) {
 		return this.acceptX(this.initialState,w);
-	}	
+	}
 }
 
 const abc = new FiniteAutomaton({
@@ -184,7 +184,7 @@ const abc = new FiniteAutomaton({
 	transitions: [
 			["START",'a',"A"], ["START",'b',"START"],
 						["START",'c',"START"], ["START",'d',"START"],
-			["A",'a',"A"], ["A",'b',"AB"], ["A",'c',"START"], ["A",'d',"START"], 
+			["A",'a',"A"], ["A",'b',"AB"], ["A",'c',"START"], ["A",'d',"START"],
 			["AB",'a',"A"], ["AB",'b',"START"],
 						["AB",'c',"SUCCESS"], ["AB",'d',"START"],
 			["SUCCESS",'a',"SUCCESS"], ["SUCCESS",'b',"SUCCESS"],
@@ -295,14 +295,14 @@ class CyGraph {
 //		this.cy.on('select', e => alert(e.target.id()));
 		this.fa = fa;
 	}
-	
+
 	static build(fa) {
-		alert("TO DO: convert the FA into the format required by Cytoscape (see sampleGraph)")
-		const nodes = [];
+		// alert("TO DO: convert the FA into the format required by Cytoscape (see sampleGraph)")
+		const nodes = []; //IDEA: fa.getStates().map(x => { data: { id: x, name: x } });
 		const edges = [];
 		return new CyGraph(nodes, edges, fa);
 	}
-	
+
 	static load(text) {
 		try {
 			const json = JSON.parse(text);
