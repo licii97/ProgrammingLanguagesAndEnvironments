@@ -11,40 +11,60 @@
 	<SCRIPT src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.js"></SCRIPT>
 	<SCRIPT src="https://cytoscape.org/cytoscape.js-edgehandles/cytoscape-edgehandles.js"></SCRIPT>
 	<SCRIPT type="text/javascript" src="Automatamania.js"></SCRIPT>
+	<SCRIPT>
+	var states = 0;
+	var acceptStates = 0;
+	var alphabetSize = 0;
+	var det = "non-deterministic"
+
+	</SCRIPT>
 	<STYLE>
 		html, body { font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif; font-size: 14px; height: 100%; width: 100%; padding: 0; margin: 0;}
 		#cy { position: absolute; left: 0; top: 0; bottom: 0; right: 0; z-index: 999; }
-		h1 { opacity: 1; font-size: 1em; font-weight: bold; }
+		h1 { opacity: 1; font-size: 1em; font-weight: bold; background-color: white; }
 		#buttons { position: absolute; right: 0; bottom: 0; z-index: 99999; }
 		.btn-group button {
-				border: 1px solid green; /* Green border */
-				padding: 0px 24px; /* Some padding */
-				cursor: pointer; /* Pointer/hand icon */
-				width: 50%; /* Set a width if needed */
-				display: block; /* Make the buttons appear below each other */
-				margin-bottom: 10px;
+			border-radius: 4px;
+			background-color: #ffffff;
+			border: none;
+			color: black;
+			cursor: pointer;
+			padding: 8px 36px;
+			height: 24px;
+			width: 60%;
+			text-align: left;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
 		}
-		.btn-group button:hover { background-color: lightcyan; }
+		.btn-group button:hover { background-color: #ffffe6; }
 		ul { list-style: none; padding-left: 10px; }
+		li {
+    position: relative;
+    padding-left: 11px;
+		margin: 0 0 3px 0;
+}
+		input { font-size: 12px; width: 60%; }
 	</STYLE>
 </HEAD>
 
 <BODY ONLOAD="onLoadAction(event)">
-	
-<DIV ID="menu" STYLE="position: fixed; top: 0px; left: 0px; height: 100%; width: 200px; background: pink;">
-	
-<hr><hr><h1 style="font-size: 26px;" >Automatamania</h1>
-	
-<hr><hr><b>Authors:</b> <br />
+
+<DIV ID="menu" STYLE="position: fixed; top: 0px; left: 0px; height: 100%; width: 200px; background: #e6e6e6;">
+
+<h1 style="font-size: 26px;" >Automatamania</h1>
+
+<b>Authors</b> <br />
 <UL>
 <!-- Put here your number and name! -->
 	<li>56554 Pascal Maximilian Engel
 	<li>56601 Felicitas Schmelz
-</UL>	
+</UL>
 
-<hr><hr><b> Commands:</b> <br />
+<b> Commands</b> <br />
 <DIV class="btn-group">
 <UL>
+	<li><INPUT ID="input" type="text" placeholder="Input" value="">
 	<li><BUTTON ID="Reachable" ONCLICK="reachable(event)">Reachable</BUTTON>
 	<li><BUTTON ID="Productive" ONCLICK="productive(event)">Productive</BUTTON>
 	<li><BUTTON ID="Useful" ONCLICK="useful(event)">Useful</BUTTON>
@@ -55,13 +75,18 @@
 	<li><INPUT ID="file-select" TYPE='file' ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'>
 </UL>
 
-<hr><hr>
+<b> Automaton Statistics</b> <br />
+<UL>
+	<li>Number of states: <script>document.write(states)</script>
+	<li>Number of accept states: <script>document.write(acceptStates)</script>
+	<li>Aphabet size: <script>document.write(alphabetSize)</script>
+	<li> <script>document.write(det)</script>
+</UL>
+
 </DIV>
 
 
-<DIV id="cy" STYLE="position: fixed; top: 0px; left: 200px; background: lightcyan;"></DIV>
+<DIV id="cy" STYLE="position: fixed; top: 0px; left: 200px; background: white;"></DIV>
 
 </BODY>
 </HTML>
-
-
