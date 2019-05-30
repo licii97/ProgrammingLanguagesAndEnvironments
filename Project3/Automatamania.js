@@ -183,17 +183,15 @@ class FiniteAutomaton extends AbstractAutomaton {
 		return this.acceptX(this.initialState,w);
 	}
 
-	/*deterministic(){
-		this.getStates().forEach(function(elem){
-			[x,y] = this.gcut(elem, this.transitions);
-			for (var i = 0; i<= x.length; i++){
-				for(var j = 0; j<= x.length; j++){
-					if ((i != j) && (x[i][0] == x[j][0]) && (x[i][1] == x[j][1]) && (x[i][2] == x[j][2])) return false; 
-				}
-			}
-		})
-		return true; 
-	}*/
+	deterministic(){
+		console.log(this.transitions);
+		console.log(this.transitions.map(([s,t,_0]) => [s,t]));
+		return (this.transitions.length == canonical(this.transitions.map(([s,t,_0]) => [s,t])).length);
+	}
+
+	generate(l){
+		return; 
+	}
 }
 
 const abc = new FiniteAutomaton({
@@ -409,17 +407,18 @@ function reachable_F(event) {
 			break;
 	}
 
-	//console.log(reachableNodes);
+	console.log(reachableNodes);
 
-	reachableNodes.forEach(
+	/*reachableNodes.forEach(
 		function(elem){
 			console.log(cyGraph.cy.filter('node[id = elem]')); 
 			//cyGraph.cy.filter('node[id = elem]').addClass("reachableNode");
-		})
+		})*/
 }
 
 function productive_F(event) {
 	productiveNodes = cyGraph.fa.productive();
+	console.log(productiveNodes);
 	/*productiveNodes.forEach(function(elem){
 			console.log(cyGraph.cy.filter('node[id = elem]')); 
 			//cyGraph.cy.filter('node[id = elem]').addClass("productiveNode");
@@ -427,16 +426,31 @@ function productive_F(event) {
 }
 
 function useful_F(event) {
-	alert("useful " + event);
+	f = cyGraph.fa; 
+
+	productiveNodes = f.productive();
+
+	reachableNodes = f.reachable(); 
+
+	usefulNodes = productiveNodes.filter(value => reachableNodes.includes(value));
+
+	console.log(usefulNodes);
 }
 
 function generate_F(event) {
-	alert("generate");
+	var a = document.getElementById('input').value; 
+	result = [];
+	if (result.length > 10){
+		document.getElementById('result').innerHTML = "total number of generated words =  " + result.length + "/n e.g." 
+		+ result.slice(0,10);
+	}
+	else{
+		document.getElementById('result').innerHTML = result; 
+	}
 }
 
 function accept_F(event) {
 	var a = document.getElementById('input').value; 
-	var alphabet = cyGraph.fa.getAlphabet(); 
 
 	if (cyGraph.fa.accept(a)) {
 		document.getElementById('result').innerHTML = " is accepted";}
@@ -459,18 +473,19 @@ function fileSelectAction(event) {
 		return;
 	const reader = new FileReader();
 	//callback function wird ausgeführt wenn reasAsFile abgeschlossen 
-	reader.onload = function(event) { cyGraph = CyGraph.load(event.target.result); };
+	reader.onload = function(event) { 
+		cyGraph = CyGraph.load(event.target.result);
+		statistics(cyGraph);
+	};
 	reader.readAsText(file);
-
-	statistics(cyGraph);
+	
 }
 
 function statistics(graph){
 	document.getElementById('acceptStates').innerHTML = graph.fa.getStates().length;
 	document.getElementById('states').innerHTML = graph.fa.acceptStates.length;
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
-	//console.log(graph.fa.deterministic());
-	/*if(graph.fa.deterministic()) {document.getElementById('det').innerHTML = 'deterministic';}
-	else {document.getElementById('det').innerHTML = 'non-deterministic';}*/
+	if(graph.fa.deterministic()) {document.getElementById('det').innerHTML = 'deterministic';}
+	else {document.getElementById('det').innerHTML = 'non-deterministic';}
 }
 
