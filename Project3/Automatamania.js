@@ -189,6 +189,17 @@ class FiniteAutomaton extends AbstractAutomaton {
 		return (this.transitions.length == canonical(this.transitions.map(([s,t,_0]) => [s,t])).length);
 	}
 
+	generateX(n,s,ts,a){
+		if(n == 0){
+			if(a.includes(s)) return [[]];
+			else [];
+		}
+		else {
+			var x = gcut(s,ts);
+			// TODO: x.map(arr => ); finish this
+		}
+	}
+
 	generate(l){
 		return;
 	}
@@ -465,25 +476,25 @@ function useful_F(event) {
 }
 
 function generate_F(event) {
-	var a = document.getElementById('input').value;
+	var a = document.getElementById('length').value;
 	result = [];
 	if (result.length > 10){
-		document.getElementById('result').innerHTML = "total number of generated words =  " + result.length + "/n e.g."
+		document.getElementById('generateResult').innerHTML = "total number of generated words =  " + result.length + "/n e.g."
 		+ result.slice(0,10);
 	}
 	else{
-		document.getElementById('result').innerHTML = result;
+		document.getElementById('generateResult').innerHTML = result;
 	}
 }
 
 function accept_F(event) {
-	var a = document.getElementById('input').value;
+	var a = document.getElementById('word').value;
 
 	if (cyGraph.fa.accept(a)) {
-		document.getElementById('result').innerHTML = a + " is accepted";
+		document.getElementById('acceptResult').innerHTML = a + " is accepted";
   }
 	else {
-		document.getElementById('result').innerHTML = a + " is not accepted";
+		document.getElementById('acceptResult').innerHTML = a + " is not accepted";
 	}
 }
 
