@@ -44,13 +44,47 @@
 			font-size: 12px;
 		}
 		.btn-group button:hover { background-color: #ffffe6; }
+		[type="file"] + label {
+			border-radius: 4px;
+			background-color: #ffffff;
+			border: none;
+			color: black;
+			cursor: pointer;
+			padding: 8px 36px;
+			height: 12px;
+			width: 52px;
+			text-align: left;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
+		}
+		[type="file"] + label:hover { background-color: #ffffe6; }
+		[type="file"] {
+  		border: 0;
+  		clip: rect(0, 0, 0, 0);
+  		height: 1px;
+  		overflow: hidden;
+  		padding: 0;
+  		position: absolute;
+  		white-space: nowrap;
+  		width: 1px;
+		}
+		.uploaded {
+			color: #888888;
+			font-size: 11px;
+		}
 		ul { list-style: none; padding-left: 10px; }
 		li {
     position: relative;
     padding-left: 11px;
 		margin: 0 0 3px 0;
-}
-		input { font-size: 12px; width: 70%; }
+		[type="file"] {
+  		height: 0;
+  		overflow: hidden;
+  		width: 0;
+		}
+	}
+		input { font-size: 12px; width: 70%; border-radius: 4px; border: none; }
 	</STYLE>
 </HEAD>
 
@@ -81,7 +115,10 @@
 	<li><span ID="acceptResult"></span>
 	<li><BUTTON ID="Step" ONCLICK="step_F(event)">Step</BUTTON>
 	<li><BUTTON ID="Animation" ONCLICK="animation_F(event)">Animation</BUTTON>
+	<li><INPUT ID="file-select" TYPE="file" ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'/>
+    	<LABEL for="file-select" />Upload</LABEL>
 	<li><INPUT ID="file-select" TYPE='file' ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'>
+	<li><span ID="fileName" CLASS="uploaded"></span>
 </UL>
 
 <b> Automaton Statistics</b> <br />
@@ -90,7 +127,7 @@
 	<li>Number of accept states: <span ID="acceptStates"></span>
 	<li>Aphabet: <span ID="alphabet"></span>
 	<li>Aphabet size: <span ID="alphabetSize"></span>
-	<li> <span ID="det"> </span>
+	<li> <span ID="det"></span>
 </UL>
 
 </DIV>

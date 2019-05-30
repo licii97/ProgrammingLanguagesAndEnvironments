@@ -516,9 +516,12 @@ function fileSelectAction(event) {
 		cyGraph = CyGraph.load(event.target.result);
 		statistics(cyGraph);
 	};
+	var input = event.srcElement;
+  var fileName = input.files[0].name;
+	document.getElementById('fileName').innerHTML = fileName;
 	reader.readAsText(file);
-
 }
+
 
 function arrayToString(arr){
   var str = "";
