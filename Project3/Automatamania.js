@@ -396,6 +396,35 @@ function onLoadAction(event) {
 	statistics(cyGraph);
 }
 
+function onMouseUpAction(event) {
+	//reset color when selecting node
+	//runs slowly, maybe find another way
+	cyGraph.cy.on('select', function(event){
+		cyGraph.fa.getStates().forEach(
+			(node) => {
+				cyGraph.cy.style()
+					.selector(cyGraph.cy.filter(function(element, i){
+						return !element.selected() && element.isNode() && element.data('id') === node;
+					}))
+					.style({
+						'background-color': 'gray'
+					})
+					.update()
+				;
+				cyGraph.cy.style()
+					.selector(cyGraph.cy.filter(function(element, i){
+						return element.selected() && element.isNode() && element.data('id') === node;
+					}))
+					.style({
+						'background-color': 'blue'
+					})
+					.update()
+				;
+			}
+		);
+	});
+}
+
 function reachable_F(event) {
 	selectedNodes = [];
 	reachableNodes = [];
