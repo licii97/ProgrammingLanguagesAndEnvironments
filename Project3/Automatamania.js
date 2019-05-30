@@ -182,6 +182,18 @@ class FiniteAutomaton extends AbstractAutomaton {
 	accept(w) {
 		return this.acceptX(this.initialState,w);
 	}
+
+	/*deterministic(){
+		this.getStates().forEach(function(elem){
+			[x,y] = this.gcut(elem, this.transitions);
+			for (var i = 0; i<= x.length; i++){
+				for(var j = 0; j<= x.length; j++){
+					if ((i != j) && (x[i][0] == x[j][0]) && (x[i][1] == x[j][1]) && (x[i][2] == x[j][2])) return false; 
+				}
+			}
+		})
+		return true; 
+	}*/
 }
 
 const abc = new FiniteAutomaton({
@@ -295,6 +307,13 @@ const cyGraphStyle = {
 			style: {
 				'color': 'purple'
 			}
+		},
+		//selector for giving productive nodes a yellow color
+		{
+			selector: '.productiveNode',
+			style: {
+				'color': 'yellow'
+			}
 		}
 	  ]
 };
@@ -365,6 +384,7 @@ class CyGraph {
 
 function onLoadAction(event) {
 	cyGraph = CyGraph.sampleGraph();
+	statistics(cyGraph);
 }
 
 function reachable_F(event) {
@@ -374,7 +394,7 @@ function reachable_F(event) {
 		selectedNodes.push(elem.id());
 		})
 
-	console.log(selectedNodes);
+	//console.log(selectedNodes);
 
 	switch (selectedNodes.length){
 		case 0 : 
@@ -389,17 +409,21 @@ function reachable_F(event) {
 			break;
 	}
 
-	console.log(reachableNodes);
+	//console.log(reachableNodes);
 
 	reachableNodes.forEach(
 		function(elem){
-			console.log(cyGraph.cy.elements(id = elem)); //cyGraph.cy.element(elem).addClass("reachableNode");
+			console.log(cyGraph.cy.filter('node[id = elem]')); 
+			//cyGraph.cy.filter('node[id = elem]').addClass("reachableNode");
 		})
 }
 
 function productive_F(event) {
-
-	alert("productive " + event);
+	productiveNodes = cyGraph.fa.productive();
+	/*productiveNodes.forEach(function(elem){
+			console.log(cyGraph.cy.filter('node[id = elem]')); 
+			//cyGraph.cy.filter('node[id = elem]').addClass("productiveNode");
+		})*/
 }
 
 function useful_F(event) {
@@ -407,11 +431,18 @@ function useful_F(event) {
 }
 
 function generate_F(event) {
-	alert("generate " + event);
+	alert("generate");
 }
 
 function accept_F(event) {
-	alert("accept? " + event);
+	var a = document.getElementById('input').value; 
+	var alphabet = cyGraph.fa.getAlphabet(); 
+
+	if (cyGraph.fa.accept(a)) {
+		document.getElementById('result').innerHTML = " is accepted";}
+	else {
+		document.getElementById('result').innerHTML = " is not accepted";
+	}
 }
 
 function step_F(event) {
@@ -434,11 +465,12 @@ function fileSelectAction(event) {
 	statistics(cyGraph);
 }
 
-
-
 function statistics(graph){
 	document.getElementById('acceptStates').innerHTML = graph.fa.getStates().length;
 	document.getElementById('states').innerHTML = graph.fa.acceptStates.length;
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
+	//console.log(graph.fa.deterministic());
+	/*if(graph.fa.deterministic()) {document.getElementById('det').innerHTML = 'deterministic';}
+	else {document.getElementById('det').innerHTML = 'non-deterministic';}*/
 }
 
