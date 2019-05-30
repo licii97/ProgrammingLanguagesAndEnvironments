@@ -133,7 +133,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 	}
 
 	getAlphabet(){
-		return canonical(this.transitions.map(([_0,a,_1]) => a)); 
+		return canonical(this.transitions.map(([_0,a,_1]) => a));
 	}
 
 
@@ -190,7 +190,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 	}
 
 	generate(l){
-		return; 
+		return;
 	}
 }
 
@@ -387,7 +387,7 @@ function onLoadAction(event) {
 
 function reachable_F(event) {
 	selectedNodes = [];
-	reachableNodes = []; 
+	reachableNodes = [];
 	cyGraph.cy.elements(":selected").each(function(elem){
 		selectedNodes.push(elem.id());
 		})
@@ -395,14 +395,14 @@ function reachable_F(event) {
 	//console.log(selectedNodes);
 
 	switch (selectedNodes.length){
-		case 0 : 
+		case 0 :
 			cyGraph.cy.$('#START').select();
 			reachableNodes = cyGraph.fa.reachable();
-			break; 
-		case 1 : 
+			break;
+		case 1 :
 			reachableNodes = canonical(cyGraph.fa.reachableX(selectedNodes[0], cyGraph.fa.transitions));
-			break; 
-		default : 
+			break;
+		default :
 			alert("More than one node selected");
 			break;
 	}
@@ -411,7 +411,7 @@ function reachable_F(event) {
 
 	/*reachableNodes.forEach(
 		function(elem){
-			console.log(cyGraph.cy.filter('node[id = elem]')); 
+			console.log(cyGraph.cy.filter('node[id = elem]'));
 			//cyGraph.cy.filter('node[id = elem]').addClass("reachableNode");
 		})*/
 }
@@ -420,17 +420,17 @@ function productive_F(event) {
 	productiveNodes = cyGraph.fa.productive();
 	console.log(productiveNodes);
 	/*productiveNodes.forEach(function(elem){
-			console.log(cyGraph.cy.filter('node[id = elem]')); 
+			console.log(cyGraph.cy.filter('node[id = elem]'));
 			//cyGraph.cy.filter('node[id = elem]').addClass("productiveNode");
 		})*/
 }
 
 function useful_F(event) {
-	f = cyGraph.fa; 
+	f = cyGraph.fa;
 
 	productiveNodes = f.productive();
 
-	reachableNodes = f.reachable(); 
+	reachableNodes = f.reachable();
 
 	usefulNodes = productiveNodes.filter(value => reachableNodes.includes(value));
 
@@ -438,19 +438,19 @@ function useful_F(event) {
 }
 
 function generate_F(event) {
-	var a = document.getElementById('input').value; 
+	var a = document.getElementById('input').value;
 	result = [];
 	if (result.length > 10){
-		document.getElementById('result').innerHTML = "total number of generated words =  " + result.length + "/n e.g." 
+		document.getElementById('result').innerHTML = "total number of generated words =  " + result.length + "/n e.g."
 		+ result.slice(0,10);
 	}
 	else{
-		document.getElementById('result').innerHTML = result; 
+		document.getElementById('result').innerHTML = result;
 	}
 }
 
 function accept_F(event) {
-	var a = document.getElementById('input').value; 
+	var a = document.getElementById('input').value;
 
 	if (cyGraph.fa.accept(a)) {
 		document.getElementById('result').innerHTML = " is accepted";}
@@ -472,20 +472,19 @@ function fileSelectAction(event) {
 	if( file == undefined ) // if canceled
 		return;
 	const reader = new FileReader();
-	//callback function wird ausgeführt wenn reasAsFile abgeschlossen 
-	reader.onload = function(event) { 
+	//callback function wird ausgeführt wenn reasAsFile abgeschlossen
+	reader.onload = function(event) {
 		cyGraph = CyGraph.load(event.target.result);
 		statistics(cyGraph);
 	};
 	reader.readAsText(file);
-	
+
 }
 
 function statistics(graph){
-	document.getElementById('acceptStates').innerHTML = graph.fa.getStates().length;
-	document.getElementById('states').innerHTML = graph.fa.acceptStates.length;
+	document.getElementById('states').innerHTML = graph.fa.getStates().length;
+	document.getElementById('acceptStates').innerHTML = graph.fa.acceptStates.length;
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
 	if(graph.fa.deterministic()) {document.getElementById('det').innerHTML = 'deterministic';}
 	else {document.getElementById('det').innerHTML = 'non-deterministic';}
 }
-
