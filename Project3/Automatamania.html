@@ -5,7 +5,7 @@
 <!-- INSIDE THIS FILE, YOU CAN CHANGE ALMOST EVERYTHING! -->
 
 <HEAD>
-	<TITLE>Linguagens e Ambientes de ProgramaÃ§Ã£o (2018/2019) [Eng.Inf. - DI/FCT/UNL] - 3Âº projeto prÃ¡tico (Automatamania)</TITLE>
+	<TITLE>Linguagens e Ambientes de Programação (2018/2019) [Eng.Inf. - DI/FCT/UNL] - 3º projeto prático (Automatamania)</TITLE>
 	<META name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 	<SCRIPT src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></SCRIPT>
 	<SCRIPT src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.js"></SCRIPT>
@@ -89,22 +89,34 @@
 </UL>
 
 <b> Commands</b> <br />
+<p>States</p>
 <DIV class="btn-group">
 <UL>
 	<li><BUTTON ID="Reachable" ONCLICK="reachable_F(event)">Reachable</BUTTON>
 	<li><BUTTON ID="Productive" ONCLICK="productive_F(event)">Productive</BUTTON>
 	<li><BUTTON ID="Useful" ONCLICK="useful_F(event)">Useful</BUTTON>
-	<li><BUTTON ID="Generate" ONCLICK="generate_F(event)">Generate</BUTTON>
+</UL>
+
+<p>Word Generator</p>
+<UL>
 	<li><INPUT ID="length" type="text" placeholder="Length" value="">
+	<li><BUTTON ID="Generate" ONCLICK="generate_F(event)">Generate</BUTTON>
 	<li><span ID="generateResult"></span>
-	<li><BUTTON ID="Accept" ONCLICK="accept_F(event)">Accept?</BUTTON>
+</UL>
+
+<p>Word Test</p>
+<UL>
 	<li><INPUT ID="word" type="text" placeholder="Word" value="">
+	<li><BUTTON ID="Accept" ONCLICK="accept_F(event)">Accept?</BUTTON>
 	<li><span ID="acceptResult"></span>
 	<li><BUTTON ID="Step" ONCLICK="step_F(event)">Step</BUTTON>
 	<li><BUTTON ID="Animation" ONCLICK="animation_F(event)">Animation</BUTTON>
+</UL>
+
+<p>File</p>
+<UL>
 	<li><INPUT ID="file-select" TYPE="file" ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'/>
     	<LABEL for="file-select" />Upload</LABEL>
-	<li><INPUT ID="file-select" TYPE='file' ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'>
 	<li><span ID="fileName" CLASS="uploaded"></span>
 </UL>
 
