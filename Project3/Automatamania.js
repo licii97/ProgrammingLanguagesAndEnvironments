@@ -407,22 +407,43 @@ function reachable_F(event) {
 			break;
 	}
 
-	console.log(reachableNodes);
+  // TODO: reset selected nodes
 
-	/*reachableNodes.forEach(
-		function(elem){
-			console.log(cyGraph.cy.filter('node[id = elem]'));
-			//cyGraph.cy.filter('node[id = elem]').addClass("reachableNode");
-		})*/
+  reachableNodes.forEach(
+		(node) => {
+			cyGraph.cy.style()
+				.selector(cyGraph.cy.filter(function(element, i){
+					return !selectedNodes.includes(element.data('id')) && element.isNode() && element.data('id') === node;
+				}))
+				.style({
+					'background-color': 'purple'
+				})
+				.update()
+			;
+		}
+	);
+
+	console.log(reachableNodes);
 }
 
 function productive_F(event) {
 	productiveNodes = cyGraph.fa.productive();
+
+  productiveNodes.forEach(
+		(node) => {
+			cyGraph.cy.style()
+				.selector(cyGraph.cy.filter(function(element, i){
+					return element.isNode() && element.data('id') === node;
+				}))
+				.style({
+					'background-color': 'yellow'
+				})
+				.update()
+			;
+		}
+	);
+
 	console.log(productiveNodes);
-	/*productiveNodes.forEach(function(elem){
-			console.log(cyGraph.cy.filter('node[id = elem]'));
-			//cyGraph.cy.filter('node[id = elem]').addClass("productiveNode");
-		})*/
 }
 
 function useful_F(event) {
@@ -453,9 +474,10 @@ function accept_F(event) {
 	var a = document.getElementById('input').value;
 
 	if (cyGraph.fa.accept(a)) {
-		document.getElementById('result').innerHTML = " is accepted";}
+		document.getElementById('result').innerHTML = a + " is accepted";
+  }
 	else {
-		document.getElementById('result').innerHTML = " is not accepted";
+		document.getElementById('result').innerHTML = a + " is not accepted";
 	}
 }
 
@@ -481,9 +503,17 @@ function fileSelectAction(event) {
 
 }
 
+function arrayToString(arr){
+  var str = "";
+  for(i in arr) str += arr[i] + ", ";
+  var res = str.substr(0, str.length-2);
+  return res;
+}
+
 function statistics(graph){
 	document.getElementById('states').innerHTML = graph.fa.getStates().length;
 	document.getElementById('acceptStates').innerHTML = graph.fa.acceptStates.length;
+  document.getElementById('alphabet').innerHTML = arrayToString(graph.fa.getAlphabet());
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
 	if(graph.fa.deterministic()) {document.getElementById('det').innerHTML = 'deterministic';}
 	else {document.getElementById('det').innerHTML = 'non-deterministic';}

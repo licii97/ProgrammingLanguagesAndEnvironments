@@ -18,10 +18,10 @@
 		var det = "non-deterministic"
 
 		function defineValues(statesF, acceptStatesF, alphabetSizeF, detF){
-			states = statesF; 
-			acceptStates = acceptStatesF; 
-			alphabetSize = alphabetSizeF; 
-			det = detF; 
+			states = statesF;
+			acceptStates = acceptStatesF;
+			alphabetSize = alphabetSizeF;
+			det = detF;
 		}
 	</SCRIPT>-->
 	<STYLE>
@@ -71,21 +71,22 @@
 <DIV class="btn-group">
 <UL>
 	<li><INPUT ID="input" type="text" placeholder="Input" value="">
-	<span ID="result"></span>
 	<li><BUTTON ID="Reachable" ONCLICK="reachable_F(event)">Reachable</BUTTON>
 	<li><BUTTON ID="Productive" ONCLICK="productive_F(event)">Productive</BUTTON>
 	<li><BUTTON ID="Useful" ONCLICK="useful_F(event)">Useful</BUTTON>
 	<li><BUTTON ID="Generate" ONCLICK="generate_F(event)">Generate</BUTTON>
 	<li><BUTTON ID="Accept" ONCLICK="accept_F(event)">Accept?</BUTTON>
 	<li><BUTTON ID="Step" ONCLICK="step_F(event)">Step</BUTTON>
-	<li><BUTTON ID="Animation" ONCLICK="animation_F(event)">Aniomation</BUTTON>
+	<li><BUTTON ID="Animation" ONCLICK="animation_F(event)">Animation</BUTTON>
 	<li><INPUT ID="file-select" TYPE='file' ACCEPT='application/json' ONCHANGE='fileSelectAction(event)'>
+	<li><span ID="result"></span>
 </UL>
 
 <b> Automaton Statistics</b> <br />
 <UL>
 	<li>Number of states: <span ID="states"> <!-- <script>document.write(states)</script> --> </span>
 	<li>Number of accept states: <span ID="acceptStates"> <!-- <script>document.write(acceptStates)</script> --> </span>
+	<li>Aphabet: <span ID="alphabet"></span>
 	<li>Aphabet size: <span ID="alphabetSize"> <!-- <script>document.write(alphabetSize)</script> --> </span>
 	<li> <span ID="det"> <!-- <script>document.write(det)</script> --> </span>
 </UL>
