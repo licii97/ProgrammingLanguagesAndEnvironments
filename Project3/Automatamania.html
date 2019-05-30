@@ -63,18 +63,18 @@
 <b>Authors</b> <br />
 <UL>
 <!-- Put here your number and name! -->
-	<li>56554 Pascal Maximilian Engel
+	<li>56554 Pascal Engel
 	<li>56601 Felicitas Schmelz
 </UL>
 
 <b> Commands</b> <br />
 <DIV class="btn-group">
 <UL>
-	<li><INPUT ID="input" type="text" placeholder="Input" value="">
 	<li><BUTTON ID="Reachable" ONCLICK="reachable_F(event)">Reachable</BUTTON>
 	<li><BUTTON ID="Productive" ONCLICK="productive_F(event)">Productive</BUTTON>
 	<li><BUTTON ID="Useful" ONCLICK="useful_F(event)">Useful</BUTTON>
 	<li><BUTTON ID="Generate" ONCLICK="generate_F(event)">Generate</BUTTON>
+	<li><INPUT ID="input" type="text" placeholder="Input" value="">
 	<li><BUTTON ID="Accept" ONCLICK="accept_F(event)">Accept?</BUTTON>
 	<li><BUTTON ID="Step" ONCLICK="step_F(event)">Step</BUTTON>
 	<li><BUTTON ID="Animation" ONCLICK="animation_F(event)">Animation</BUTTON>
@@ -84,11 +84,11 @@
 
 <b> Automaton Statistics</b> <br />
 <UL>
-	<li>Number of states: <span ID="states"> <!-- <script>document.write(states)</script> --> </span>
-	<li>Number of accept states: <span ID="acceptStates"> <!-- <script>document.write(acceptStates)</script> --> </span>
+	<li>Number of states: <span ID="states"></span>
+	<li>Number of accept states: <span ID="acceptStates"></span>
 	<li>Aphabet: <span ID="alphabet"></span>
-	<li>Aphabet size: <span ID="alphabetSize"> <!-- <script>document.write(alphabetSize)</script> --> </span>
-	<li> <span ID="det"> <!-- <script>document.write(det)</script> --> </span>
+	<li>Aphabet size: <span ID="alphabetSize"></span>
+	<li> <span ID="det"> </span>
 </UL>
 
 </DIV>

@@ -392,8 +392,6 @@ function reachable_F(event) {
 		selectedNodes.push(elem.id());
 		})
 
-	//console.log(selectedNodes);
-
 	switch (selectedNodes.length){
 		case 0 :
 			cyGraph.cy.$('#START').select();
@@ -422,8 +420,6 @@ function reachable_F(event) {
 			;
 		}
 	);
-
-	console.log(reachableNodes);
 }
 
 function productive_F(event) {
@@ -442,8 +438,6 @@ function productive_F(event) {
 			;
 		}
 	);
-
-	console.log(productiveNodes);
 }
 
 function useful_F(event) {
@@ -455,7 +449,19 @@ function useful_F(event) {
 
 	usefulNodes = productiveNodes.filter(value => reachableNodes.includes(value));
 
-	console.log(usefulNodes);
+	usefulNodes.forEach(
+		(node) => {
+			cyGraph.cy.style()
+				.selector(cyGraph.cy.filter(function(element, i){
+					return element.isNode() && element.data('id') === node;
+				}))
+				.style({
+					'background-color': 'green'
+				})
+				.update()
+			;
+		}
+	);
 }
 
 function generate_F(event) {
