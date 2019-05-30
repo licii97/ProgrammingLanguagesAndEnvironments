@@ -398,7 +398,8 @@ function onLoadAction(event) {
 
 function onMouseUpAction(event) {
 	//reset color when selecting node
-	//runs slowly, maybe find another way
+	//runs slowly and does not reset when node already selected
+	//maybe find another way here
 	cyGraph.cy.on('select', function(event){
 		cyGraph.fa.getStates().forEach(
 			(node) => {
@@ -561,7 +562,9 @@ function arrayToString(arr){
 
 function statistics(graph){
 	document.getElementById('states').innerHTML = graph.fa.getStates().length;
-	document.getElementById('acceptStates').innerHTML = graph.fa.acceptStates.length;
+	document.getElementById('noAcceptStates').innerHTML = graph.fa.acceptStates.length;
+	if(graph.fa.acceptStates.length != 1) document.getElementById('pluralS').innerHTML = "s";
+	document.getElementById('acceptStates').innerHTML = arrayToString(graph.fa.acceptStates);
   document.getElementById('alphabet').innerHTML = arrayToString(graph.fa.getAlphabet());
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
 	if(graph.fa.deterministic()) document.getElementById('det').innerHTML = 'Deterministic';

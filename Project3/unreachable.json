@@ -1,8 +1,9 @@
 
 { "initialState": "START",
 	"transitions": [
-			["START","a","A"], ["A","b","SUCCESS"], ["B","b","B"], ["B","c","C"],
-			 ["A","a","C"], ["B","a","SUCCESS"]
+			["D","a","D"], ["START","a","A"], ["A","b","SUCCESS"], ["A","a","C"],
+			["C","c","C"], ["SUCCESS","c","SUCCESS"], ["B","b","B"], ["B","c","C"],
+			["B","a","SUCCESS"]
 		],
-	"acceptStates": ["SUCCESS"]
+	"acceptStates": ["D","SUCCESS"]
 }
