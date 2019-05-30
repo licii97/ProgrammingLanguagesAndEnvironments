@@ -515,6 +515,6 @@ function statistics(graph){
 	document.getElementById('acceptStates').innerHTML = graph.fa.acceptStates.length;
   document.getElementById('alphabet').innerHTML = arrayToString(graph.fa.getAlphabet());
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
-	if(graph.fa.deterministic()) {document.getElementById('det').innerHTML = 'deterministic';}
-	else {document.getElementById('det').innerHTML = 'non-deterministic';}
+	if(graph.fa.deterministic()) document.getElementById('det').innerHTML = 'Deterministic';
+	else document.getElementById('det').innerHTML = 'Non-deterministic';
 }
