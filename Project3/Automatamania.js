@@ -132,6 +132,11 @@ class FiniteAutomaton extends AbstractAutomaton {
 		);
 	}
 
+	getAlphabet(){
+		return canonical(this.transitions.map(([_0,a,_1]) => a)); 
+	}
+
+
 	gcut(s, ts) {
 		return [ts.filter(([z,_0,_1]) => z == s),
 				ts.filter(([z,_0,_1]) => z != s)];
@@ -425,5 +430,15 @@ function fileSelectAction(event) {
 	//callback function wird ausgeführt wenn reasAsFile abgeschlossen 
 	reader.onload = function(event) { cyGraph = CyGraph.load(event.target.result); };
 	reader.readAsText(file);
+
+	statistics(cyGraph);
+}
+
+
+
+function statistics(graph){
+	document.getElementById('acceptStates').innerHTML = graph.fa.getStates().length;
+	document.getElementById('states').innerHTML = graph.fa.acceptStates.length;
+	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
 }
 
