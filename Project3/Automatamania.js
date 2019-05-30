@@ -564,6 +564,7 @@ function statistics(graph){
 	document.getElementById('states').innerHTML = graph.fa.getStates().length;
 	document.getElementById('noAcceptStates').innerHTML = graph.fa.acceptStates.length;
 	if(graph.fa.acceptStates.length != 1) document.getElementById('pluralS').innerHTML = "s";
+	else document.getElementById('pluralS').innerHTML = "";
 	document.getElementById('acceptStates').innerHTML = arrayToString(graph.fa.acceptStates);
   document.getElementById('alphabet').innerHTML = arrayToString(graph.fa.getAlphabet());
 	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
