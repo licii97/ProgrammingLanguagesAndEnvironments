@@ -426,7 +426,7 @@ const recolorNode = (
 
 function onMouseUpAction(event) {
 	//reset all nodes' colors when (un-)selecting node
-	cyGraph.cy.on('select', 'edge', e => cy.elements().not(e.target).unselect());
+//cyGraph.cy.on('select', 'edge', e => cy.elements().not(e.target).unselect());
 	cyGraph.cy.on('select', e => cyGraph.fa.getStates().forEach(recolorNode));
 	cyGraph.cy.on('unselect', e => cyGraph.fa.getStates().forEach(recolorNode));
 }
@@ -563,8 +563,8 @@ function step_F(event) {
 	}
 
 	var selectedNode = selectedNodes[0];
-
 	x = w.charAt(0);
+
 	for(i in f.transitions){
 		if(f.transitions[i][1] == x && f.transitions[i][0] == selectedNode){
 			cyGraph.cy.$('#'+selectedNode).unselect();
@@ -580,6 +580,18 @@ function step_F(event) {
 					}))
 					.style({
 						'background-color': 'green'
+					})
+					.update()
+				;
+				return;
+			}
+			else if(w == ""){
+				cyGraph.cy.style()
+					.selector(cyGraph.cy.filter(function(element, i){
+						return element.isNode() && element.data('id') === selectedNode;
+					}))
+					.style({
+						'background-color': 'red'
 					})
 					.update()
 				;
@@ -602,9 +614,42 @@ function step_F(event) {
 	return;
 }
 
-function animation_F(event) {
-	alert("animation " + event);
-}
+function animation_F(event) {setTimeout(function(){
+	var w = document.getElementById('word').value;
+	f = cyGraph.fa;
+
+	//get selected node
+	var selectedNodes = [];
+	cyGraph.cy.elements(":selected").each(function(elem){
+		selectedNodes.push(elem.id());
+		})
+
+	switch (selectedNodes.length){
+		case 0 :
+			cyGraph.cy.$('#'+f.initialState).select();
+			break;
+		case 1 :
+			break;
+		default :
+			alert("More than one node selected");
+			return;
+	}
+
+	var selectedNode = selectedNodes[0];
+	x = w.charAt(0);
+
+	transitionsAvailable = false;
+	for(i in f.transitions){
+			if(f.transitions[i][0] == selectedNode && f.transitions[i][1] == x){
+			transitionsAvailable = true;
+			break;
+		}
+	}
+	if(w =! "" && transitionsAvailable){
+		step_F(event);
+		animation_F(event);
+	}
+},1000);}
 
 function fileSelectAction(event) {
 	const file = event.target.files[0];
