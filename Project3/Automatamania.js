@@ -340,7 +340,7 @@ class CyGraph {
 		spec.container = document.getElementById('cy');  // the graph is placed in the DIV 'cy'
 		this.cy = cytoscape(spec);
 		this.cy.$('#START').select();
-//		this.cy.on('select', e => alert(e.target.id()));
+		//this.cy.on('select', e => alert(e.target.id()));
 		this.fa = fa;
 	}
 
@@ -401,33 +401,38 @@ function onLoadAction(event) {
 	statistics(cyGraph);
 }
 
+const recolorNode = (
+	(node) => {
+		cyGraph.cy.style()
+			.selector(cyGraph.cy.filter(function(element, i){
+				return !element.selected() && element.isNode() && element.data('id') === node;
+			}))
+			.style({
+				'background-color': 'gray'
+			})
+			.update()
+		;
+		cyGraph.cy.style()
+			.selector(cyGraph.cy.filter(function(element, i){
+				return element.selected() && element.isNode() && element.data('id') === node;
+			}))
+			.style({
+				'background-color': 'blue'
+			})
+			.update()
+		;
+	}
+);
+
 function onMouseUpAction(event) {
 	//reset color when selecting node
 	//runs slowly and does not reset when node already selected
 	//maybe find another way here
 	cyGraph.cy.on('select', function(event){
-		cyGraph.fa.getStates().forEach(
-			(node) => {
-				cyGraph.cy.style()
-					.selector(cyGraph.cy.filter(function(element, i){
-						return !element.selected() && element.isNode() && element.data('id') === node;
-					}))
-					.style({
-						'background-color': 'gray'
-					})
-					.update()
-				;
-				cyGraph.cy.style()
-					.selector(cyGraph.cy.filter(function(element, i){
-						return element.selected() && element.isNode() && element.data('id') === node;
-					}))
-					.style({
-						'background-color': 'blue'
-					})
-					.update()
-				;
-			}
-		);
+		cyGraph.fa.getStates().forEach(recolorNode);
+	});
+	cyGraph.cy.on('unselect', function(event){
+		cyGraph.fa.getStates().forEach(recolorNode);
 	});
 }
 
@@ -440,7 +445,7 @@ function reachable_F(event) {
 
 	switch (selectedNodes.length){
 		case 0 :
-			cyGraph.cy.$('#START').select();
+			cyGraph.cy.$('#'+cyGraph.fa.initialState).select();
 			reachableNodes = cyGraph.fa.reachable();
 			break;
 		case 1 :
@@ -450,8 +455,6 @@ function reachable_F(event) {
 			alert("More than one node selected");
 			break;
 	}
-
-  // TODO: reset selected nodes
 
   reachableNodes.forEach(
 		(node) => {
@@ -513,8 +516,8 @@ function useful_F(event) {
 function arrayToString(arr){
   var str = "";
   for(i in arr) str += arr[i] + ", ";
-  var res = str.substr(0, str.length-2);
-  return res;
+  str = str.substr(0, str.length-2);
+  return str;
 }
 
 function wordToString(arr){
@@ -524,14 +527,14 @@ function wordToString(arr){
 }
 
 function generate_F(event) {
-	var n = document.getElementById('length').value;
+	const n = document.getElementById('length').value;
 	f = cyGraph.fa;
 	result = f.generate(n).map(wordToString);
 	document.getElementById('generateResult').innerHTML = arrayToString(result);
 }
 
 function accept_F(event) {
-	var w = document.getElementById('word').value;
+	const w = document.getElementById('word').value;
 
 	if (cyGraph.fa.accept(w)) {
 		document.getElementById('acceptResult').innerHTML = w + " is accepted";
@@ -542,7 +545,64 @@ function accept_F(event) {
 }
 
 function step_F(event) {
-	alert("step " + event);
+	var w = document.getElementById('word').value;
+	f = cyGraph.fa;
+
+	//get selected node
+	var selectedNodes = [];
+	cyGraph.cy.elements(":selected").each(function(elem){
+		selectedNodes.push(elem.id());
+		})
+
+	switch (selectedNodes.length){
+		case 0 :
+			cyGraph.cy.$('#'+f.initialState).select();
+			break;
+		case 1 :
+			break;
+		default :
+			alert("More than one node selected");
+			return;
+	}
+
+	var selectedNode = selectedNodes[0];
+
+	x = w.charAt(0);
+	for(i in f.transitions){
+		if(f.transitions[i][1] == x && f.transitions[i][0] == selectedNode){
+			cyGraph.cy.$('#'+selectedNode).unselect();
+			var next = f.transitions[i][2];
+			cyGraph.cy.$('#'+next).select();
+
+			w = w.substring(1);
+			document.getElementById('word').value = w;
+			if(w == "" && f.acceptStates.includes(next)){
+				cyGraph.cy.style()
+					.selector(cyGraph.cy.filter(function(element, i){
+						return element.isNode() && element.data('id') === next;
+					}))
+					.style({
+						'background-color': 'green'
+					})
+					.update()
+				;
+				return;
+			}
+			f.getStates().forEach(recolorNode);
+			return;
+		}
+	}
+	// if no transition available
+	cyGraph.cy.style()
+		.selector(cyGraph.cy.filter(function(element, i){
+			return element.isNode() && element.data('id') === selectedNode;
+		}))
+		.style({
+			'background-color': 'red'
+		})
+		.update()
+	;
+	return;
 }
 
 function animation_F(event) {
