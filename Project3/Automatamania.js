@@ -7,12 +7,7 @@ Student 2: 56601 Felicitas Schmelz
 
 Comment:
 
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
-?????????????????????????
+Javascript Module to interact with loaded (json) finite automatons
 
 01234567890123456789012345678901234567890123456789012345678901234567890123456789
 
@@ -186,7 +181,8 @@ class FiniteAutomaton extends AbstractAutomaton {
 	deterministic(){
 		console.log(this.transitions);
 		console.log(this.transitions.map(([s,t,_0]) => [s,t]));
-		return (this.transitions.length == canonical(this.transitions.map(([s,t,_0]) => [s,t])).length);
+		return (this.transitions.length ==
+			canonical(this.transitions.map(([s,t,_0]) => [s,t])).length);
 	}
 
 	addAll(symb,arr){
@@ -202,12 +198,14 @@ class FiniteAutomaton extends AbstractAutomaton {
 		else {
 			var xy = this.gcut(s,ts);
 			var x = xy[0];
-			return x.flatMap(([_0,symb,s]) => this.addAll(symb,this.generateX(n-1,s,ts,a)));
+			return x.flatMap(([_0,symb,s]) =>
+				this.addAll(symb,this.generateX(n-1,s,ts,a)));
 		}
 	}
 
 	generate(n){
-		return this.generateX(n,this.initialState,this.transitions,this.acceptStates);
+		return this.generateX(n,this.initialState,
+			this.transitions,this.acceptStates);
 	}
 }
 
@@ -337,17 +335,17 @@ class CyGraph {
 	constructor(nodes, edges, fa) {
 		const spec = clone(cyGraphStyle);
 		spec.elements = { "nodes": nodes, "edges": edges};
-		spec.container = document.getElementById('cy');  // the graph is placed in the DIV 'cy'
+		spec.container = document.getElementById('cy');
 		this.cy = cytoscape(spec);
 		this.cy.$('#START').select();
-		//this.cy.on('select', e => alert(e.target.id()));
 		this.fa = fa;
 	}
 
 	static build(fa) {
-		// alert("TO DO: convert the FA into the format required by Cytoscape (see sampleGraph)")
-		const nodes = fa.getStates().map(function(x){return { data: { id: x, name: x } }});
-		const edges = fa.transitions.map(function(x){return { data: { source: x[0], symbol: x[1], target: x[2] } }} ) ;
+		const nodes = fa.getStates().map(function(x){
+			return { data: { id: x, name: x } }});
+		const edges = fa.transitions.map(function(x){
+			return { data: { source: x[0], symbol: x[1], target: x[2] } }} ) ;
 		return new CyGraph(nodes, edges, fa);
 	}
 
@@ -405,7 +403,8 @@ const recolorNode = (
 	(node) => {
 		cyGraph.cy.style()
 			.selector(cyGraph.cy.filter(function(element, i){
-				return !element.selected() && element.isNode() && element.data('id') === node;
+				return !element.selected() && element.isNode()
+								&& element.data('id') === node;
 			}))
 			.style({
 				'background-color': 'gray'
@@ -414,7 +413,8 @@ const recolorNode = (
 		;
 		cyGraph.cy.style()
 			.selector(cyGraph.cy.filter(function(element, i){
-				return element.selected() && element.isNode() && element.data('id') === node;
+				return element.selected() && element.isNode()
+								&& element.data('id') === node;
 			}))
 			.style({
 				'background-color': 'blue'
@@ -425,15 +425,10 @@ const recolorNode = (
 );
 
 function onMouseUpAction(event) {
-	//reset color when selecting node
-	//runs slowly and does not reset when node already selected
-	//maybe find another way here
-	cyGraph.cy.on('select', function(event){
-		cyGraph.fa.getStates().forEach(recolorNode);
-	});
-	cyGraph.cy.on('unselect', function(event){
-		cyGraph.fa.getStates().forEach(recolorNode);
-	});
+	//reset all nodes' colors when (un-)selecting node
+	cyGraph.cy.on('select', 'edge', e => cy.elements().not(e.target).unselect());
+	cyGraph.cy.on('select', e => cyGraph.fa.getStates().forEach(recolorNode));
+	cyGraph.cy.on('unselect', e => cyGraph.fa.getStates().forEach(recolorNode));
 }
 
 function reachable_F(event) {
@@ -449,7 +444,8 @@ function reachable_F(event) {
 			reachableNodes = cyGraph.fa.reachable();
 			break;
 		case 1 :
-			reachableNodes = canonical(cyGraph.fa.reachableX(selectedNodes[0], cyGraph.fa.transitions));
+			reachableNodes = canonical(cyGraph.fa.reachableX(selectedNodes[0],
+																											cyGraph.fa.transitions));
 			break;
 		default :
 			alert("More than one node selected");
@@ -460,7 +456,8 @@ function reachable_F(event) {
 		(node) => {
 			cyGraph.cy.style()
 				.selector(cyGraph.cy.filter(function(element, i){
-					return !selectedNodes.includes(element.data('id')) && element.isNode() && element.data('id') === node;
+					return !selectedNodes.includes(element.data('id'))
+									&& element.isNode() && element.data('id') === node;
 				}))
 				.style({
 					'background-color': 'purple'
@@ -632,12 +629,18 @@ function fileSelectAction(event) {
 
 function statistics(graph){
 	document.getElementById('states').innerHTML = graph.fa.getStates().length;
-	document.getElementById('noAcceptStates').innerHTML = graph.fa.acceptStates.length;
-	if(graph.fa.acceptStates.length != 1) document.getElementById('pluralS').innerHTML = "s";
+	document.getElementById('noAcceptStates').innerHTML =
+		graph.fa.acceptStates.length;
+	if(graph.fa.acceptStates.length != 1)
+		document.getElementById('pluralS').innerHTML = "s";
 	else document.getElementById('pluralS').innerHTML = "";
-	document.getElementById('acceptStates').innerHTML = arrayToString(graph.fa.acceptStates);
-  document.getElementById('alphabet').innerHTML = arrayToString(graph.fa.getAlphabet());
-	document.getElementById('alphabetSize').innerHTML = graph.fa.getAlphabet().length;
-	if(graph.fa.deterministic()) document.getElementById('det').innerHTML = 'Deterministic';
+	document.getElementById('acceptStates').innerHTML =
+		arrayToString(graph.fa.acceptStates);
+  document.getElementById('alphabet').innerHTML =
+		arrayToString(graph.fa.getAlphabet());
+	document.getElementById('alphabetSize').innerHTML =
+		graph.fa.getAlphabet().length;
+	if(graph.fa.deterministic())
+		document.getElementById('det').innerHTML = 'Deterministic';
 	else document.getElementById('det').innerHTML = 'Non-deterministic';
 }
