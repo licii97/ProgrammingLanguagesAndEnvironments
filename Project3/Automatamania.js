@@ -358,6 +358,8 @@ class CyGraph {
 			return this.build(fa);
 		} catch( ex ) {
 			alert(ex);
+			document.getElementById('generateResult').value = "";
+			document.getElementById('acceptResult').value = "";
 			document.getElementById('file-select').value = "";
 		}
 	}
