@@ -185,11 +185,6 @@ class FiniteAutomaton extends AbstractAutomaton {
 			canonical(this.transitions.map(([s,t,_0]) => [s,t])).length);
 	}
 
-	addAll(symb,arr){
-		arr.map(x => x.unshift(symb));
-		return arr;
-	}
-
 	generateX(n,s,ts,a){
 		if(n == 0){
 			if(a.includes(s)) return [[]];
@@ -199,7 +194,7 @@ class FiniteAutomaton extends AbstractAutomaton {
 			var xy = this.gcut(s,ts);
 			var x = xy[0];
 			return x.flatMap(([_0,symb,s]) =>
-				this.addAll(symb,this.generateX(n-1,s,ts,a)));
+				addAll(symb,this.generateX(n-1,s,ts,a)));
 		}
 	}
 
