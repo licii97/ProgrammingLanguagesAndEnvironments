@@ -189,19 +189,25 @@ class FiniteAutomaton extends AbstractAutomaton {
 		return (this.transitions.length == canonical(this.transitions.map(([s,t,_0]) => [s,t])).length);
 	}
 
+	addAll(symb,arr){
+		arr.map(x => x.unshift(symb));
+		return arr;
+	}
+
 	generateX(n,s,ts,a){
 		if(n == 0){
 			if(a.includes(s)) return [[]];
-			else [];
+			else return [];
 		}
 		else {
-			var x = gcut(s,ts);
-			// TODO: x.map(arr => ); finish this
+			var xy = this.gcut(s,ts);
+			var x = xy[0];
+			return x.flatMap(([_0,symb,s]) => this.addAll(symb,this.generateX(n-1,s,ts,a)));
 		}
 	}
 
-	generate(l){
-		return;
+	generate(n){
+		return this.generateX(n,this.initialState,this.transitions,this.acceptStates);
 	}
 }
 
@@ -505,26 +511,34 @@ function useful_F(event) {
 	);
 }
 
+function arrayToString(arr){
+  var str = "";
+  for(i in arr) str += arr[i] + ", ";
+  var res = str.substr(0, str.length-2);
+  return res;
+}
+
+function wordToString(arr){
+  var str = "";
+  for(i in arr) str += arr[i];
+  return str;
+}
+
 function generate_F(event) {
-	var a = document.getElementById('length').value;
-	result = [];
-	if (result.length > 10){
-		document.getElementById('generateResult').innerHTML = "total number of generated words =  " + result.length + "/n e.g."
-		+ result.slice(0,10);
-	}
-	else{
-		document.getElementById('generateResult').innerHTML = result;
-	}
+	var n = document.getElementById('length').value;
+	f = cyGraph.fa;
+	result = f.generate(n).map(wordToString);
+	document.getElementById('generateResult').innerHTML = arrayToString(result);
 }
 
 function accept_F(event) {
-	var a = document.getElementById('word').value;
+	var w = document.getElementById('word').value;
 
-	if (cyGraph.fa.accept(a)) {
-		document.getElementById('acceptResult').innerHTML = a + " is accepted";
+	if (cyGraph.fa.accept(w)) {
+		document.getElementById('acceptResult').innerHTML = w + " is accepted";
   }
 	else {
-		document.getElementById('acceptResult').innerHTML = a + " is not accepted";
+		document.getElementById('acceptResult').innerHTML = w + " is not accepted";
 	}
 }
 
@@ -550,14 +564,6 @@ function fileSelectAction(event) {
   var fileName = input.files[0].name;
 	document.getElementById('fileName').innerHTML = fileName;
 	reader.readAsText(file);
-}
-
-
-function arrayToString(arr){
-  var str = "";
-  for(i in arr) str += arr[i] + ", ";
-  var res = str.substr(0, str.length-2);
-  return res;
 }
 
 function statistics(graph){
