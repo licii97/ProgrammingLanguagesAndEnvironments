@@ -358,9 +358,6 @@ class CyGraph {
 			return this.build(fa);
 		} catch( ex ) {
 			alert(ex);
-			document.getElementById('generateResult').value = "";
-			document.getElementById('acceptResult').value = "";
-			document.getElementById('file-select').value = "";
 		}
 	}
 
@@ -565,6 +562,11 @@ function fileSelectAction(event) {
 	var input = event.srcElement;
   var fileName = input.files[0].name;
 	document.getElementById('fileName').innerHTML = fileName;
+	//reset input/output
+	document.getElementById('generateResult').innerHTML = "";
+	document.getElementById('length').value = "";
+	document.getElementById('acceptResult').innerHTML = "";
+	document.getElementById('word').value = "";
 	reader.readAsText(file);
 }
 
