@@ -39,6 +39,14 @@
 			color: #eeeeee;
 			padding: 4px;
 		}
+		p {
+			text-align: left;
+			padding-left: 22px;
+		}
+		.commands ul {
+			padding: 0;
+			margin: 0;
+		}
 		#buttons { position: absolute; right: 0; bottom: 0; z-index: 99999; }
 		.btn-group button {
 			border-radius: 4px;
@@ -46,30 +54,35 @@
 			border: none;
 			color: black;
 			cursor: pointer;
-			padding: 8px 36px;
 			height: 24px;
 			width: 70%;
-			text-align: left;
+			text-align: center;
 			text-decoration: none;
 			display: inline-block;
 			font-size: 12px;
 		}
-		.btn-group button:hover { background-color: #ffffe6; }
+		.btn-group button:hover {
+			background-color: #ffffe6;
+			box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+		}
 		[type="file"] + label {
 			border-radius: 4px;
 			background-color: #ffffff;
 			border: none;
 			color: black;
 			cursor: pointer;
-			padding: 8px 36px;
 			height: 12px;
 			width: 52px;
-			text-align: left;
+			padding: 7px 36px;
+			text-align: center;
 			text-decoration: none;
 			display: inline-block;
 			font-size: 12px;
 		}
-		[type="file"] + label:hover { background-color: #ffffe6; }
+		[type="file"] + label:hover {
+			background-color: #ffffe6;
+			box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+		}
 		[type="file"] {
   		border: 0;
   		clip: rect(0, 0, 0, 0);
@@ -95,9 +108,13 @@
   		margin: 5px 1px 3px 0px;
   		border: 1px solid rgba(81, 203, 238, 1);
 		}
+		input[type="text"]:hover {
+			box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+		}
 		ul {
 			list-style: none;
-			padding-left: 10px; }
+			padding-left: 10px;
+	 	}
 		li {
     position: relative;
     padding-left: 11px;
@@ -125,6 +142,7 @@
 	<li>56601 Felicitas Schmelz
 </UL>
 
+<div id="commands">
 <b> Commands</b> <br />
 <p>States</p>
 <DIV class="btn-group">
@@ -156,8 +174,9 @@
     	<LABEL for="file-select" />Upload</LABEL>
 	<li><span ID="fileName" CLASS="uploaded"></span>
 </UL>
+</div>
 
-<b> Automaton Statistics</b> <br />
+<b> Automaton Information</b> <br />
 <UL>
 	<li>Total states: <span ID="states"></span>
 	<li><span ID="noAcceptStates"></span>  accept state<span ID="pluralS"></span>: <span ID="acceptStates"></span>
